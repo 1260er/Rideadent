@@ -99,4 +99,9 @@
     <string name="home_state_restricted">Eingeschränkt</string>
     <string name="status_permissions">Berechtigungen: %1$s</string>
     <string name="status_battery">Akkuoptimierung: %1$s</string>
+    <string name="settings_permissions_hint">Benötigte Zugriffsrechte prüfen und erteilen.</string>
+    <string name="settings_battery_hint">Hintergrund- und Akkubeschränkungen in Android prüfen.</string>
+    <string name="settings_devices_hint">Bluetooth-Geräte für beide Automationen auswählen.</string>
+    <string name="settings_automations_hint">Blitzer.de, Anrufe, SMS-Text und Autostart verwalten.</string>
+    <string name="settings_diagnostics_hint">Dienstzustände und letzte Ereignisse ansehen.</string>
 </resources>

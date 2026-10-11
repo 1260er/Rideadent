@@ -163,13 +163,6 @@ public class MainActivity extends Activity {
         header.addView(pageTitle,
                 new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        ImageButton settings = new ImageButton(this);
-        settings.setImageResource(R.drawable.ic_rydatent_settings);
-        settings.setImageTintList(ColorStateList.valueOf(color(R.color.ui_text_primary)));
-        settings.setBackgroundResource(android.R.drawable.list_selector_background);
-        settings.setContentDescription(getString(R.string.page_settings));
-        header.addView(settings, new LinearLayout.LayoutParams(dp(48), dp(48)));
-        settings.setOnClickListener(view -> navigate(Page.SETTINGS));
         root.addView(header);
 
         ScrollView scroll = new ScrollView(this);
@@ -291,13 +284,55 @@ public class MainActivity extends Activity {
     }
 
     private void renderSettings() {
-        LinearLayout settings = card();
-        title(settings, R.string.page_settings);
-        secondary(settings, getString(R.string.settings_intro));
-        action(settings, R.string.page_devices, () -> navigate(Page.DEVICES));
-        action(settings, R.string.page_automations, () -> navigate(Page.AUTOMATIONS));
-        action(settings, R.string.page_permissions, () -> navigate(Page.PERMISSIONS));
-        action(settings, R.string.page_diagnostics, () -> navigate(Page.DIAGNOSTICS));
+        settingsNavigationCard(R.drawable.ic_rydatent_permissions,
+                R.string.page_permissions, R.string.settings_permissions_hint,
+                () -> navigate(Page.PERMISSIONS));
+        settingsNavigationCard(R.drawable.ic_rydatent_battery,
+                R.string.permission_battery, R.string.settings_battery_hint,
+                this::openAppSettings);
+        settingsNavigationCard(R.drawable.ic_rydatent_bluetooth,
+                R.string.page_devices, R.string.settings_devices_hint,
+                () -> navigate(Page.DEVICES));
+        settingsNavigationCard(R.drawable.ic_rydatent_automations,
+                R.string.page_automations, R.string.settings_automations_hint,
+                () -> navigate(Page.AUTOMATIONS));
+        settingsNavigationCard(R.drawable.ic_rydatent_diagnostics,
+                R.string.page_diagnostics, R.string.settings_diagnostics_hint,
+                () -> navigate(Page.DIAGNOSTICS));
+    }
+
+    private void settingsNavigationCard(int iconResource, int titleResource,
+                                        int hintResource, Runnable onOpen) {
+        LinearLayout item = card();
+        item.setOrientation(LinearLayout.HORIZONTAL);
+        item.setGravity(Gravity.CENTER_VERTICAL);
+
+        ImageView badge = new ImageView(this);
+        badge.setImageResource(iconResource);
+        badge.setImageTintList(ColorStateList.valueOf(0xFFFFFFFF));
+        badge.setPadding(dp(12), dp(12), dp(12), dp(12));
+        badge.setBackgroundResource(R.drawable.home_icon_badge);
+        LinearLayout.LayoutParams badgeParams =
+                new LinearLayout.LayoutParams(dp(52), dp(52));
+        badgeParams.rightMargin = dp(14);
+        item.addView(badge, badgeParams);
+
+        LinearLayout description = new LinearLayout(this);
+        description.setOrientation(LinearLayout.VERTICAL);
+        item.addView(description, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView heading = body(description, getString(titleResource));
+        heading.setTypeface(null, Typeface.BOLD);
+        heading.setTextSize(17);
+        TextView hint = secondary(description, getString(hintResource));
+        hint.setTextSize(13);
+        hint.setPadding(0, dp(4), 0, 0);
+
+        item.setContentDescription(getString(titleResource));
+        item.setClickable(true);
+        item.setFocusable(true);
+        item.setOnClickListener(view -> onOpen.run());
     }
 
     private LinearLayout card() {
@@ -546,15 +581,15 @@ public class MainActivity extends Activity {
         Set<String> relevant = Prefs.active(this);
         relevant.retainAll(Prefs.chosen(this, functionType));
         boolean connected = !relevant.isEmpty();
-
-        TextView label = body(parent, "");
-        label.setTextSize(15);
-        setHomeStatusLineColor(label, templateResource,
-                connected ? R.string.home_state_connected_with
-                          : R.string.home_state_disconnected,
-                connected ? R.color.ui_control_accent : R.color.ui_text_secondary);
         setHomeLink(parent, !connected, view -> navigate(Page.DEVICES));
-        if (!connected) return;
+
+        if (!connected) {
+            TextView disconnected = body(parent, "");
+            disconnected.setTextSize(15);
+            setHomeStatusLineColor(disconnected, templateResource,
+                    R.string.home_state_disconnected, R.color.ui_text_secondary);
+            return;
+        }
 
         // Only already-connected, selected device addresses are used for display.
         List<String> names = new ArrayList<>();
@@ -592,14 +627,35 @@ public class MainActivity extends Activity {
         }
         names.sort(String.CASE_INSENSITIVE_ORDER);
 
-        // Aligned device-name rows, each truncated visually with an ellipsis.
-        for (String name : names) {
-            TextView deviceName = body(parent, name);
+        // The first device is on the label line. Any additional device begins
+        // at the same x-position, and is ellipsized within the available width.
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.TOP);
+        parent.addView(row, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        TextView label = body(row, getString(templateResource, ""));
+        label.setTextSize(15);
+        label.setPadding(0, 0, dp(4), 0);
+
+        LinearLayout deviceNames = new LinearLayout(this);
+        deviceNames.setOrientation(LinearLayout.VERTICAL);
+        row.addView(deviceNames, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        for (int i = 0; i < names.size(); i++) {
+            String name = names.get(i);
+            TextView deviceName = body(deviceNames, name);
             deviceName.setTextSize(15);
             deviceName.setTextColor(color(R.color.ui_control_accent));
             deviceName.setSingleLine(true);
             deviceName.setEllipsize(TextUtils.TruncateAt.END);
-            deviceName.setPadding(dp(12), dp(2), 0, 0);
+            deviceName.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            deviceName.setPadding(0, i == 0 ? 0 : dp(3), 0, 0);
             deviceName.setContentDescription(name);
         }
     }
