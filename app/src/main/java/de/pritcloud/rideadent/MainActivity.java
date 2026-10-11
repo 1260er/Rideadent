@@ -420,11 +420,10 @@ public class MainActivity extends Activity {
         item.addView(description, new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView heading = body(description,
-                completed ? "✓ " + getString(titleResource) : getString(titleResource));
+        TextView heading = body(description, getString(titleResource));
         heading.setTypeface(null, Typeface.BOLD);
         heading.setTextSize(17);
-        if (completed) heading.setTextColor(color(R.color.ui_control_accent));
+        if (completed) styleCheckedLabel(heading, getString(titleResource));
         TextView hint = secondary(description, getString(hintResource));
         hint.setTextSize(13);
         hint.setPadding(0, dp(4), 0, 0);
@@ -534,6 +533,7 @@ public class MainActivity extends Activity {
 
         ImageView mark = new ImageView(this);
         mark.setImageResource(R.drawable.rideadent_hero_logo);
+        mark.setImageTintList(ColorStateList.valueOf(color(R.color.ui_text_primary)));
         mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
         hero.addView(mark, new LinearLayout.LayoutParams(dp(132), dp(142)));
 
@@ -546,10 +546,10 @@ public class MainActivity extends Activity {
         TextView name = body(heroText, getString(R.string.app_name));
         name.setTextSize(27);
         name.setTypeface(null, Typeface.BOLD);
-        name.setTextColor(0xFFFFFFFF);
+        name.setTextColor(color(R.color.ui_text_primary));
         TextView subtitle = body(heroText, getString(R.string.home_hero_title));
         subtitle.setTextSize(19);
-        subtitle.setTextColor(0xFFE2E0DE);
+        subtitle.setTextColor(color(R.color.ui_text_secondary));
         subtitle.setPadding(0, dp(8), 0, 0);
 
         homeAutomationCard(R.drawable.ic_rideadent_camera,
@@ -992,7 +992,7 @@ public class MainActivity extends Activity {
             noPause = false;
         }
         permissionStateCard(R.drawable.ic_rideadent_battery,
-                R.string.battery_unused_action,
+                R.string.battery_unused_title,
                 R.string.battery_unused_explanation,
                 noPause, this::openUnusedAppSettings);
     }
@@ -1053,10 +1053,16 @@ public class MainActivity extends Activity {
     }
 
     private void styleCompletedAction(Button button, int labelResource) {
-        button.setText("✓ " + getString(labelResource));
-        button.setBackgroundTintList(ColorStateList.valueOf(
-                color(R.color.ui_control_accent)));
-        button.setTextColor(0xFF202020);
+        styleCheckedLabel(button, getString(labelResource));
+    }
+
+    // A selected title is orange; the trailing check is the theme's primary text color.
+    private void styleCheckedLabel(TextView view, String label) {
+        SpannableString titleAndCheck = new SpannableString(label + "  ✓");
+        titleAndCheck.setSpan(new ForegroundColorSpan(color(R.color.ui_text_primary)),
+                label.length(), titleAndCheck.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        view.setTextColor(color(R.color.ui_control_accent));
+        view.setText(titleAndCheck);
     }
 
     private void permissionStateCard(int iconResource, int titleResource,
@@ -1073,8 +1079,26 @@ public class MainActivity extends Activity {
     }
 
     private void requestSinglePermission(String permission) {
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, R.string.setting_already_active,
+                    Toast.LENGTH_SHORT).show();
+            renderCurrentPage();
+            return;
+        }
+
+        // Once a permission can no longer be requested by a runtime dialog,
+        // offer the app settings instead of silently doing nothing.
+        String attemptedKey = "permission_requested_" + permission;
+        boolean attempted = Prefs.get(this).getBoolean(attemptedKey, false);
+        if (attempted && !shouldShowRequestPermissionRationale(permission)) {
+            openAppSettings();
+            return;
+        }
+        Prefs.get(this).edit().putBoolean(attemptedKey, true).apply();
         requestPermissions(new String[]{permission}, 12);
     }
+
+
 
     private void requestDrivingNotifications(boolean androidPermissionGranted) {
         if (!androidPermissionGranted) {

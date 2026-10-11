@@ -39,7 +39,7 @@
     <string name="devices_none">Keine gekoppelten Bluetooth-Geräte gefunden.</string>
     <string name="devices_permission_missing">Für die Anzeige gekoppelter Geräte wird die Bluetooth-Berechtigung benötigt.</string>
     <string name="permission_bluetooth_hint">Erkennt verbundene Bluetooth-Geräte für die Automationen.</string>
-    <string name="permission_contacts_hint">Ermöglicht die Namenszuordnung bei der Anrufbehandlung.</string>
+    <string name="permission_contacts_hint">Die aktuelle Anrufautomatik verwendet den Kontaktzugriff derzeit nicht.</string>
     <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
     <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus als Android-Benachrichtigung an.</string>
     <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>
@@ -51,11 +51,11 @@
     <string name="permission_notification_post">Fahrmodus-Benachrichtigung erlauben</string>
     <string name="permission_app_settings">Rideadent-App- und Akku-Einstellungen öffnen</string>
     <string name="permission_bluetooth">Bluetooth</string>
-    <string name="permission_contacts">Kontakte für Anruffilter</string>
+    <string name="permission_contacts">Kontakte</string>
     <string name="permission_sms">SMS-Versand</string>
     <string name="permission_notifications">Fahrmodus-Benachrichtigung</string>
     <string name="permission_call_screening">Anruffilter</string>
-    <string name="permission_notification_listener">Blitzer.de-Benachrichtigungszugriff</string>
+    <string name="permission_notification_listener">Benachrichtigungszugriff</string>
     <string name="permission_background">Hintergrundausführung</string>
     <string name="permission_battery">Akkuoptimierung</string>
     <string name="state_granted">erteilt</string>
@@ -111,7 +111,7 @@
     <string name="settings_permissions_hint">Benötigte Zugriffsrechte prüfen und erteilen.</string>
     <string name="settings_battery_hint">Hintergrund- und Akkubeschränkungen in Android prüfen.</string>
     <string name="settings_devices_hint">Bluetooth-Geräte für beide Automationen auswählen.</string>
-    <string name="settings_automations_hint">Blitzer.de, Anrufe, SMS-Text und Autostart verwalten.</string>
+    <string name="settings_automations_hint">SMS-Text und Autostart verwalten.</string>
     <string name="settings_diagnostics_hint">Dienstzustände und letzte Ereignisse ansehen.</string>
     <string name="about_name_title">Der Name Ride-a-dent</string>
     <string name="about_name_text">Ride-a-dent ist ein Wortspiel aus „Ride“ (fahren) und „Assistant“ (Assistent). Die Schreibweise zeigt zugleich die gewünschte Aussprache des App-Namens Rideadent.</string>
@@ -125,7 +125,7 @@
     <string name="page_battery">Akkuoptimierung</string>
     <string name="page_display">Darstellung</string>
     <string name="settings_display_hint">Helles, dunkles oder systemabhängiges Design auswählen.</string>
-    <string name="battery_unrestricted_title">Uneingeschränkte Akkunutzung</string>
+    <string name="battery_unrestricted_title">Akkunutzung der App</string>
     <string name="battery_unrestricted_explanation">Damit Rideadent im Hintergrund zuverlässiger überwachen kann, ist die Freigabe durch Android nötig.</string>
     <string name="battery_unrestricted_action">Nutzung uneingeschränkt zulassen</string>
     <string name="battery_unused_title">App bei Nichtnutzung pausieren</string>

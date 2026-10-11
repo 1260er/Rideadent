@@ -39,7 +39,7 @@
     <string name="devices_none">No paired Bluetooth devices found.</string>
     <string name="devices_permission_missing">Bluetooth permission is required to show paired devices.</string>
     <string name="permission_bluetooth_hint">Detects connected Bluetooth devices for automations.</string>
-    <string name="permission_contacts_hint">Allows caller names to be resolved during call handling.</string>
+    <string name="permission_contacts_hint">The current call automation does not use contacts access.</string>
     <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
     <string name="permission_notifications_hint">Displays the active driving mode as an Android notification.</string>
     <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>
@@ -51,11 +51,11 @@
     <string name="permission_notification_post">Allow driving mode notification</string>
     <string name="permission_app_settings">Open Rideadent app and battery settings</string>
     <string name="permission_bluetooth">Bluetooth</string>
-    <string name="permission_contacts">Contacts for call screening</string>
+    <string name="permission_contacts">Contacts</string>
     <string name="permission_sms">SMS sending</string>
     <string name="permission_notifications">Driving mode notification</string>
     <string name="permission_call_screening">Call screening</string>
-    <string name="permission_notification_listener">Blitzer.de notification access</string>
+    <string name="permission_notification_listener">Notification access</string>
     <string name="permission_background">Background execution</string>
     <string name="permission_battery">Battery optimization</string>
     <string name="state_granted">granted</string>
@@ -111,7 +111,7 @@
     <string name="settings_permissions_hint">Check and grant required access rights.</string>
     <string name="settings_battery_hint">Review background and battery restrictions in Android.</string>
     <string name="settings_devices_hint">Choose Bluetooth devices for both automations.</string>
-    <string name="settings_automations_hint">Configure Blitzer.de, calls, SMS text and autostart.</string>
+    <string name="settings_automations_hint">Configure SMS text and autostart.</string>
     <string name="settings_diagnostics_hint">View service status and recent events.</string>
     <string name="about_name_title">The name Ride-a-dent</string>
     <string name="about_name_text">Ride-a-dent is a playful combination of “Ride” and “Assistant”. The hyphenated form also shows how the app name Rideadent is meant to be pronounced.</string>
@@ -125,7 +125,7 @@
     <string name="page_battery">Battery optimization</string>
     <string name="page_display">Appearance</string>
     <string name="settings_display_hint">Choose light, dark or system appearance.</string>
-    <string name="battery_unrestricted_title">Unrestricted battery usage</string>
+    <string name="battery_unrestricted_title">App battery usage</string>
     <string name="battery_unrestricted_explanation">Lets Rideadent keep its background monitoring running with fewer battery restrictions. Android must approve this setting.</string>
     <string name="battery_unrestricted_action">Allow unrestricted battery usage</string>
     <string name="battery_unused_title">Pause app activity if unused</string>
