@@ -74,7 +74,7 @@
     <string name="diagnostics_empty">No events recorded yet.</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_title">Rydatent</string>
-    <string name="about_text">Rydatent combines Bluetooth triggered Blitzer.de monitoring and motorcycle call handling. This build establishes the scenic UI foundation for further development.</string>
+    <string name="about_text">Rydatent is a driving companion for Bluetooth-triggered automations. It helps you operate fewer things manually while on the road.</string>
     <string name="about_privacy">All automation state and diagnostic history remain local to the app. Rydatent does not process incoming SMS or messenger messages.</string>
     <string name="toast_call_role_active">Call screening is already active.</string>
     <string name="toast_call_role_unavailable">Call screening role is not available.</string>
@@ -104,4 +104,11 @@
     <string name="settings_devices_hint">Choose Bluetooth devices for both automations.</string>
     <string name="settings_automations_hint">Configure Blitzer.de, calls, SMS text and autostart.</string>
     <string name="settings_diagnostics_hint">View service status and recent events.</string>
+    <string name="about_name_title">The name Rydatent</string>
+    <string name="about_name_text">The name evokes “ride” and “attentive” and stands for staying attentive while travelling more comfortably.</string>
+    <string name="about_features_title">What does the app do?</string>
+    <string name="about_features_text">With a selected Bluetooth device connected, Rydatent can launch and monitor Blitzer.de. It can also reject incoming calls and optionally send an automatic SMS. Both automations are configurable separately.</string>
+    <string name="about_privacy_title">Privacy and usage</string>
+    <string name="about_notice">Proper Android permissions and background settings are required. Rydatent does not replace your attention or responsibility while driving.</string>
+    <string name="about_version_title">Version</string>
 </resources>

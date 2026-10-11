@@ -74,7 +74,7 @@
     <string name="diagnostics_empty">Noch keine Ereignisse aufgezeichnet.</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_title">Rydatent</string>
-    <string name="about_text">Rydatent verbindet Bluetooth-gesteuerte Blitzer.de-Überwachung mit der Anrufbehandlung beim Motorradfahren. Dieser Stand bildet den Scenic-UI-Grundrahmen für die weitere Entwicklung.</string>
+    <string name="about_text">Rydatent ist dein Fahrbegleiter für Bluetooth-gesteuerte Automationen. So musst du unterwegs weniger manuell bedienen.</string>
     <string name="about_privacy">Automationszustände und Diagnoseverlauf bleiben lokal in der App. Rydatent verarbeitet keine eingehenden SMS oder Messenger-Nachrichten.</string>
     <string name="toast_call_role_active">Anruffilter ist bereits aktiv.</string>
     <string name="toast_call_role_unavailable">Anruffilter-Rolle ist nicht verfügbar.</string>
@@ -104,4 +104,11 @@
     <string name="settings_devices_hint">Bluetooth-Geräte für beide Automationen auswählen.</string>
     <string name="settings_automations_hint">Blitzer.de, Anrufe, SMS-Text und Autostart verwalten.</string>
     <string name="settings_diagnostics_hint">Dienstzustände und letzte Ereignisse ansehen.</string>
+    <string name="about_name_title">Der Name Rydatent</string>
+    <string name="about_name_text">Der Name erinnert an „ride“ (fahren) und „attentive“ (aufmerksam). Er steht für aufmerksames und zugleich entspannteres Unterwegssein.</string>
+    <string name="about_features_title">Was macht die App?</string>
+    <string name="about_features_text">Wenn ein ausgewähltes Bluetooth-Gerät verbunden ist, kann Rydatent Blitzer.de starten und überwachen. Außerdem kann die App Anrufe abweisen und optional eine automatische SMS senden. Beide Automationen sind getrennt einstellbar.</string>
+    <string name="about_privacy_title">Datenschutz und Hinweise</string>
+    <string name="about_notice">Erforderlich sind passende Android-Berechtigungen und Einstellungen für den Hintergrundbetrieb. Rydatent ersetzt nicht die eigene Aufmerksamkeit im Straßenverkehr.</string>
+    <string name="about_version_title">Version</string>
 </resources>

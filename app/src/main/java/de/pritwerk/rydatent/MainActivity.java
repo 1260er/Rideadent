@@ -304,6 +304,12 @@ public class MainActivity extends Activity {
     private void settingsNavigationCard(int iconResource, int titleResource,
                                         int hintResource, Runnable onOpen) {
         LinearLayout item = card();
+        LinearLayout.LayoutParams params =
+                (LinearLayout.LayoutParams) item.getLayoutParams();
+        params.height = 0;
+        params.weight = 1f;
+        item.setLayoutParams(params);
+        item.setMinimumHeight(dp(90));
         item.setOrientation(LinearLayout.HORIZONTAL);
         item.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -454,7 +460,7 @@ public class MainActivity extends Activity {
 
         homeAutomationCard(R.drawable.ic_rydatent_camera,
                 R.string.home_blitzer_title, R.string.home_blitzer_hint, "blitzer_enabled");
-        homeAutomationCard(R.drawable.ic_rydatent_phone,
+        homeAutomationCard(R.drawable.ic_rydatent_call_arrow,
                 R.string.device_calls, R.string.home_calls_hint, "reply_enabled");
 
         LinearLayout status = card();
@@ -953,13 +959,29 @@ public class MainActivity extends Activity {
     }
 
     private void renderAbout() {
-        LinearLayout about = card();
-        title(about, R.string.about_title);
-        body(about, getString(R.string.about_version, versionName()));
-        secondary(about, getString(R.string.about_text));
+        LinearLayout overview = card();
+        title(overview, R.string.about_title);
+        secondary(overview, getString(R.string.about_text));
+
+        LinearLayout naming = card();
+        title(naming, R.string.about_name_title);
+        secondary(naming, getString(R.string.about_name_text));
+
+        LinearLayout features = card();
+        title(features, R.string.about_features_title);
+        secondary(features, getString(R.string.about_features_text));
 
         LinearLayout privacy = card();
+        title(privacy, R.string.about_privacy_title);
         secondary(privacy, getString(R.string.about_privacy));
+        TextView notice = secondary(privacy, getString(R.string.about_notice));
+        notice.setPadding(0, dp(10), 0, 0);
+
+        LinearLayout version = card();
+        title(version, R.string.about_version_title);
+        TextView versionValue = body(version,
+                getString(R.string.about_version, versionName()));
+        versionValue.setTextColor(color(R.color.ui_control_accent));
     }
 
     private String versionName() {
