@@ -565,7 +565,6 @@ public class MainActivity extends Activity {
                 R.string.device_calls, R.string.home_calls_hint, "reply_enabled");
 
         LinearLayout status = card();
-        title(status, R.string.home_status);
         homeRuntime = homeStatusLine(status);
         homeService = homeStatusLine(status);
         homeBlitzerBluetooth = homeBluetoothBlock(status);
@@ -602,7 +601,7 @@ public class MainActivity extends Activity {
         setHomeStatusLineColor(homeRuntime, R.string.status_runtime,
                 automatic ? R.string.state_automatic : R.string.state_manual,
                 automatic ? R.color.ui_control_accent : R.color.ui_text_secondary);
-        setHomeLink(homeRuntime, !automatic, view -> navigate(Page.AUTOMATIONS));
+        setHomeLink(homeRuntime, true, view -> navigate(Page.AUTOMATIONS));
 
         // Distinguish inactive from the critical case: wanted but unresponsive.
         boolean needed = driveServiceWanted();
@@ -1170,19 +1169,13 @@ public class MainActivity extends Activity {
     }
 
     private void openNotificationListenerSettings() {
-        // This special access has no runtime permission dialog. Android can
-        // open the details page for Rideadent's listener directly.
-        Intent details = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
-        details.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
-                new ComponentName(this, BlitzerListener.class));
+        // The direct notification listener detail Activity crashes on some
+        // Android 17 Settings builds. Use the standard access list instead.
+        // This special permission cannot be requested via a runtime popup.
         try {
-            startActivity(details);
+            startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
         } catch (RuntimeException unavailable) {
-            try {
-                startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
-            } catch (RuntimeException fallback) {
-                openAppSettings();
-            }
+            openAppSettings();
         }
     }
 
