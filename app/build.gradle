@@ -1,17 +1,28 @@
 plugins { id 'com.android.application' }
 android { namespace 'de.pritcloud.rideadent'; compileSdk 37
- defaultConfig { applicationId 'de.pritcloud.rideadent'; minSdk 36; targetSdk 36; versionCode 31; versionName '0.1.0-dev.31' }
+ defaultConfig { applicationId 'de.pritcloud.rideadent'; minSdk 36; targetSdk 36; versionCode 32; versionName '0.1.0-dev.32' }
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 dependencies { testImplementation 'junit:junit:4.13.2' }
 
-// Persistent signing for CI development APKs.
-if (System.getenv("RIDEADENT_DEV_KEYSTORE")) {
-    android.signingConfigs.debug.storeFile =
-        file(System.getenv("RIDEADENT_DEV_KEYSTORE"))
-    android.signingConfigs.debug.storePassword =
-        System.getenv("RIDEADENT_DEV_PASSWORD")
-    android.signingConfigs.debug.keyAlias = "rydatentdev"
-    android.signingConfigs.debug.keyPassword =
-        System.getenv("RIDEADENT_DEV_PASSWORD")
+// The same permanent release key signs CI development APKs and later stable APKs.
+// Credentials are supplied only through environment variables, never via Git.
+def signingFileEnv = System.getenv("RIDEADENT_SIGNING_KEYSTORE")
+def signingPasswordEnv = System.getenv("RIDEADENT_SIGNING_PASSWORD")
+if (signingFileEnv && signingPasswordEnv) {
+    def signingFile = file(signingFileEnv)
+
+    android.signingConfigs.debug.storeFile = signingFile
+    android.signingConfigs.debug.storePassword = signingPasswordEnv
+    android.signingConfigs.debug.keyAlias = "rideadent"
+    android.signingConfigs.debug.keyPassword = signingPasswordEnv
+    android.signingConfigs.debug.storeType = "PKCS12"
+
+    def permanentReleaseSigning = android.signingConfigs.create("rideadentRelease")
+    permanentReleaseSigning.storeFile = signingFile
+    permanentReleaseSigning.storePassword = signingPasswordEnv
+    permanentReleaseSigning.keyAlias = "rideadent"
+    permanentReleaseSigning.keyPassword = signingPasswordEnv
+    permanentReleaseSigning.storeType = "PKCS12"
+    android.buildTypes.release.signingConfig = permanentReleaseSigning
 }

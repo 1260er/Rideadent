@@ -29,18 +29,21 @@ jobs:
       - name: Install Android API 37
         run: sdkmanager "platforms;android-37.0"
 
-      - name: Restore development signing key
+      - name: Restore permanent signing key
         env:
-          KEYSTORE_B64: ${{ secrets.RYDATENT_DEV_KEYSTORE_B64 }}
+          KEYSTORE_B64: ${{ secrets.RIDEADENT_SIGNING_KEYSTORE_B64 }}
         run: |
-          printf %s "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/rideadent-dev.p12"
-          chmod 600 "$RUNNER_TEMP/rideadent-dev.p12"
+          test -n "$KEYSTORE_B64"
+          printf %s "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/rideadent-release.p12"
+          chmod 600 "$RUNNER_TEMP/rideadent-release.p12"
 
       - name: Test, lint and build
         env:
-          RIDEADENT_DEV_KEYSTORE: ${{ runner.temp }}/rideadent-dev.p12
-          RIDEADENT_DEV_PASSWORD: ${{ secrets.RYDATENT_DEV_PASSWORD }}
-        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
+          RIDEADENT_SIGNING_KEYSTORE: ${{ runner.temp }}/rideadent-release.p12
+          RIDEADENT_SIGNING_PASSWORD: ${{ secrets.RIDEADENT_SIGNING_PASSWORD }}
+        run: |
+          test -n "$RIDEADENT_SIGNING_PASSWORD"
+          ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
 
       - name: Verify signed APK and publish development prerelease
         env:
@@ -49,14 +52,18 @@ jobs:
           set -euo pipefail
 
           APK="app/build/outputs/apk/debug/app-debug.apk"
+          RELEASE_APK="app/build/outputs/apk/release/app-release.apk"
           test -s "$APK"
+          test -s "$RELEASE_APK"
 
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner | sort -V | tail -n 1)"
           test -n "$APKSIGNER"
 
-          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee "$RUNNER_TEMP/signature.txt"
-          grep -Fq "Number of signers: 1" "$RUNNER_TEMP/signature.txt"
-          grep -Fq "certificate SHA-256 digest: 55edd0be8813fcbbb4276115aa70601f7b43dae9e595f1c84d2c8ac837d7761a" "$RUNNER_TEMP/signature.txt"
+          for TARGET in "$APK" "$RELEASE_APK"; do
+            "$APKSIGNER" verify --verbose --print-certs "$TARGET" | tee "$RUNNER_TEMP/signature.txt"
+            grep -Fq "Number of signers: 1" "$RUNNER_TEMP/signature.txt"
+            grep -Fq "certificate SHA-256 digest: 97ace558651ffe1e51c0467e2384a278735d094570160cd32d2faa34f19ef311" "$RUNNER_TEMP/signature.txt"
+          done
 
           VERSION="$(sed -n "s/.*versionName '\([^']*\)'.*/\1/p" app/build.gradle)"
           test -n "$VERSION"

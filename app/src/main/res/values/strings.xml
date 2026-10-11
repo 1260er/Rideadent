@@ -43,7 +43,7 @@
     <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
     <string name="permission_notifications_hint">Displays the active driving mode as an Android notification.</string>
     <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>
-    <string name="permission_notification_listener_hint">Allows monitoring of Blitzer.de notifications.</string>
+    <string name="permission_notification_listener_hint">Allows monitoring of Blitzer.de notifications. The “Conversations” category can be disabled.</string>
     <string name="permission_runtime_title">Runtime permissions</string>
     <string name="permission_request_runtime">Request Bluetooth, contacts and SMS</string>
     <string name="permission_call_role">Request call screening role</string>

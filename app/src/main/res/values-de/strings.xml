@@ -43,7 +43,7 @@
     <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
     <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus als Android-Benachrichtigung an.</string>
     <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>
-    <string name="permission_notification_listener_hint">Ermöglicht die Überwachung von Blitzer.de-Benachrichtigungen.</string>
+    <string name="permission_notification_listener_hint">Ermöglicht die Überwachung von Blitzer.de-Benachrichtigungen. Die Kategorie „Unterhaltungen“ kann deaktiviert werden.</string>
     <string name="permission_runtime_title">Laufzeitberechtigungen</string>
     <string name="permission_request_runtime">Bluetooth, Kontakte und SMS anfordern</string>
     <string name="permission_call_role">Anruffilter-Rolle anfordern</string>
