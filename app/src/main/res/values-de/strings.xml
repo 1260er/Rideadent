@@ -62,10 +62,10 @@
     <string name="state_unknown">unbekannt</string>
     <string name="state_responding">aktiv und reagiert</string>
     <string name="state_not_responding">reagiert nicht</string>
-    <string name="status_runtime">Automatik-Laufzeit: %1$s</string>
-    <string name="status_service">Fahrmodus-Dienst: %1$s</string>
-    <string name="status_blitzer_bt">Blitzer.de-Bluetooth: %1$s</string>
-    <string name="status_call_bt">Anruf-Bluetooth: %1$s</string>
+    <string name="status_runtime">Startverhalten: %1$s</string>
+    <string name="status_service">Fahrüberwachung: %1$s</string>
+    <string name="status_blitzer_bt">Blitzer.de-BT: %1$s</string>
+    <string name="status_call_bt">Anruf-BT: %1$s</string>
     <string name="status_watchdog">Dienst-Watchdog: Heartbeat alle 15 Sekunden, Ausfallstatus nach 45 Sekunden.</string>
     <string name="status_line">%1$s: %2$s</string>
     <string name="notification_channel_drive">Rydatent Fahrmodus</string>
@@ -86,4 +86,17 @@
     <string name="home_calls_hint">Weist Anrufe ab und sendet bei Bedarf eine automatische SMS.</string>
     <string name="home_switch_on">Eingeschaltet</string>
     <string name="home_switch_off">Ausgeschaltet</string>
+    <string name="state_automatic">Automatisch</string>
+    <string name="state_manual">Manuell</string>
+    <string name="home_state_active">Aktiv</string>
+    <string name="home_state_inactive">Inaktiv</string>
+    <string name="home_state_not_responding">Reagiert nicht</string>
+    <string name="home_state_connected_with">Verbunden mit</string>
+    <string name="home_state_disconnected">Nicht verbunden</string>
+    <string name="home_state_granted">Erteilt</string>
+    <string name="home_state_missing">Fehlen</string>
+    <string name="home_state_optimized">Optimiert</string>
+    <string name="home_state_restricted">Eingeschränkt</string>
+    <string name="status_permissions">Berechtigungen: %1$s</string>
+    <string name="status_battery">Akkuoptimierung: %1$s</string>
 </resources>

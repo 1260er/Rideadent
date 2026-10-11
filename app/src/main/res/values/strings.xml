@@ -62,10 +62,10 @@
     <string name="state_unknown">unknown</string>
     <string name="state_responding">active and responding</string>
     <string name="state_not_responding">not responding</string>
-    <string name="status_runtime">Automation runtime: %1$s</string>
-    <string name="status_service">Driving mode service: %1$s</string>
-    <string name="status_blitzer_bt">Blitzer.de Bluetooth: %1$s</string>
-    <string name="status_call_bt">Call Bluetooth: %1$s</string>
+    <string name="status_runtime">Start behavior: %1$s</string>
+    <string name="status_service">Drive monitoring: %1$s</string>
+    <string name="status_blitzer_bt">Blitzer.de BT: %1$s</string>
+    <string name="status_call_bt">Call BT: %1$s</string>
     <string name="status_watchdog">Service watchdog: 15 second heartbeat, stale after 45 seconds.</string>
     <string name="status_line">%1$s: %2$s</string>
     <string name="notification_channel_drive">Rydatent driving mode</string>
@@ -86,4 +86,17 @@
     <string name="home_calls_hint">Rejects calls and optionally sends an automatic SMS.</string>
     <string name="home_switch_on">Enabled</string>
     <string name="home_switch_off">Disabled</string>
+    <string name="state_automatic">Automatic</string>
+    <string name="state_manual">Manual</string>
+    <string name="home_state_active">Active</string>
+    <string name="home_state_inactive">Inactive</string>
+    <string name="home_state_not_responding">Not responding</string>
+    <string name="home_state_connected_with">Connected to</string>
+    <string name="home_state_disconnected">Not connected</string>
+    <string name="home_state_granted">Granted</string>
+    <string name="home_state_missing">Missing</string>
+    <string name="home_state_optimized">Optimized</string>
+    <string name="home_state_restricted">Restricted</string>
+    <string name="status_permissions">Permissions: %1$s</string>
+    <string name="status_battery">Battery optimization: %1$s</string>
 </resources>

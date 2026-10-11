@@ -13,6 +13,10 @@ import android.content.res.ColorStateList;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +39,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
@@ -66,8 +72,10 @@ public class MainActivity extends Activity {
     private final ImageView[] navImages = new ImageView[3];
     private TextView homeRuntime;
     private TextView homeService;
-    private TextView homeBlitzerBluetooth;
-    private TextView homeCallBluetooth;
+    private LinearLayout homeBlitzerBluetooth;
+    private LinearLayout homeCallBluetooth;
+    private TextView homePermissions;
+    private TextView homeBattery;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -244,6 +252,8 @@ public class MainActivity extends Activity {
         homeService = null;
         homeBlitzerBluetooth = null;
         homeCallBluetooth = null;
+        homePermissions = null;
+        homeBattery = null;
         content.removeAllViews();
 
         switch (currentPage) {
@@ -416,8 +426,10 @@ public class MainActivity extends Activity {
         title(status, R.string.home_status);
         homeRuntime = homeStatusLine(status);
         homeService = homeStatusLine(status);
-        homeBlitzerBluetooth = homeStatusLine(status);
-        homeCallBluetooth = homeStatusLine(status);
+        homeBlitzerBluetooth = homeBluetoothBlock(status);
+        homeCallBluetooth = homeBluetoothBlock(status);
+        homePermissions = homeStatusLine(status);
+        homeBattery = homeStatusLine(status);
         scheduleHomeStatus();
     }
 
@@ -428,20 +440,168 @@ public class MainActivity extends Activity {
         return line;
     }
 
+    private LinearLayout homeBluetoothBlock(LinearLayout parent) {
+        LinearLayout block = new LinearLayout(this);
+        block.setOrientation(LinearLayout.VERTICAL);
+        block.setPadding(0, dp(7), 0, dp(7));
+        parent.addView(block, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        return block;
+    }
+
     private void updateHomeStatus() {
         if (homeRuntime == null || currentPage != Page.HOME) {
             return;
         }
-        homeRuntime.setText(getString(R.string.status_runtime,
-                getString(Prefs.runtimeEnabled(this) ? R.string.state_active : R.string.state_inactive)));
-        homeService.setText(getString(R.string.status_service,
-                ServiceState.label(this, driveServiceWanted())));
-        homeBlitzerBluetooth.setText(getString(R.string.status_blitzer_bt,
-                getString(Prefs.connected(this, "blitzer")
-                        ? R.string.state_connected : R.string.state_disconnected)));
-        homeCallBluetooth.setText(getString(R.string.status_call_bt,
-                getString(Prefs.connected(this, "sms")
-                        ? R.string.state_connected : R.string.state_disconnected)));
+
+        // This displays the boot setting, not whether the runtime latch is set.
+        boolean automatic = Prefs.get(this).getBoolean("auto_start", false);
+        setHomeStatusLineColor(homeRuntime, R.string.status_runtime,
+                automatic ? R.string.state_automatic : R.string.state_manual,
+                automatic ? R.color.ui_control_accent : R.color.ui_text_secondary);
+        setHomeLink(homeRuntime, !automatic, view -> navigate(Page.AUTOMATIONS));
+
+        // Distinguish inactive from the critical case: wanted but unresponsive.
+        boolean needed = driveServiceWanted();
+        boolean responding = needed && ServiceState.isFresh(this);
+        setHomeStatusLineColor(homeService, R.string.status_service,
+                !needed ? R.string.home_state_inactive
+                        : responding ? R.string.home_state_active
+                                     : R.string.home_state_not_responding,
+                !needed ? R.color.ui_text_secondary
+                        : responding ? R.color.ui_control_accent : R.color.ui_danger);
+        setHomeLink(homeService, needed && !responding,
+                view -> navigate(Page.DIAGNOSTICS));
+
+        updateHomeBluetooth(homeBlitzerBluetooth, R.string.status_blitzer_bt, "blitzer");
+        updateHomeBluetooth(homeCallBluetooth, R.string.status_call_bt, "sms");
+
+        boolean granted = allHomePermissionsGranted();
+        setHomeStatusLineColor(homePermissions, R.string.status_permissions,
+                granted ? R.string.home_state_granted : R.string.home_state_missing,
+                granted ? R.color.ui_control_accent : R.color.ui_danger);
+        setHomeLink(homePermissions, !granted, view -> navigate(Page.PERMISSIONS));
+
+        // "Optimiert" is the user-facing name for unrestricted background work.
+        // Android itself calls the allowlisted state "battery optimization exempt".
+        boolean unrestricted = isHomeBatteryUnrestricted();
+        setHomeStatusLineColor(homeBattery, R.string.status_battery,
+                unrestricted ? R.string.home_state_optimized : R.string.home_state_restricted,
+                unrestricted ? R.color.ui_control_accent : R.color.ui_danger);
+        setHomeLink(homeBattery, !unrestricted, view -> openAppSettings());
+    }
+
+    private void setHomeLink(View target, boolean enabled, View.OnClickListener onClick) {
+        target.setOnClickListener(enabled ? onClick : null);
+        target.setFocusable(enabled);
+    }
+
+    private boolean allHomePermissionsGranted() {
+        if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+
+        RoleManager role = getSystemService(RoleManager.class);
+        NotificationManager notifications = getSystemService(NotificationManager.class);
+        return role != null && role.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)
+                && notifications != null && notifications.areNotificationsEnabled()
+                && notifications.isNotificationListenerAccessGranted(
+                        new ComponentName(this, BlitzerListener.class));
+    }
+
+    private boolean isHomeBatteryUnrestricted() {
+        ActivityManager activity = getSystemService(ActivityManager.class);
+        PowerManager power = getSystemService(PowerManager.class);
+        return activity != null && power != null
+                && !activity.isBackgroundRestricted()
+                && power.isIgnoringBatteryOptimizations(getPackageName());
+    }
+
+    private void setHomeStatusLineColor(TextView line, int templateResource,
+                                        int stateResource, int stateColorResource) {
+        String state = getString(stateResource);
+        String message = getString(templateResource, state);
+        int start = message.lastIndexOf(state);
+        SpannableString colored = new SpannableString(message);
+        if (start >= 0) {
+            colored.setSpan(new ForegroundColorSpan(color(stateColorResource)),
+                    start, start + state.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        line.setText(colored);
+    }
+
+    private void updateHomeBluetooth(LinearLayout parent, int templateResource,
+                                     String functionType) {
+        if (parent == null) return;
+        parent.removeAllViews();
+
+        Set<String> relevant = Prefs.active(this);
+        relevant.retainAll(Prefs.chosen(this, functionType));
+        boolean connected = !relevant.isEmpty();
+
+        TextView label = body(parent, "");
+        label.setTextSize(15);
+        setHomeStatusLineColor(label, templateResource,
+                connected ? R.string.home_state_connected_with
+                          : R.string.home_state_disconnected,
+                connected ? R.color.ui_control_accent : R.color.ui_text_secondary);
+        setHomeLink(parent, !connected, view -> navigate(Page.DEVICES));
+        if (!connected) return;
+
+        // Only already-connected, selected device addresses are used for display.
+        List<String> names = new ArrayList<>();
+        Set<BluetoothDevice> paired = Set.of();
+        if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED) {
+            BluetoothManager manager = getSystemService(BluetoothManager.class);
+            BluetoothAdapter adapter = manager == null ? null : manager.getAdapter();
+            if (adapter != null) {
+                try {
+                    paired = adapter.getBondedDevices();
+                } catch (SecurityException ignored) {
+                    // A missing name falls back to the existing address.
+                }
+            }
+        }
+
+        for (String address : relevant) {
+            String name = address;
+            if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                    == PackageManager.PERMISSION_GRANTED) {
+                for (BluetoothDevice device : paired) {
+                    try {
+                        if (address.equals(device.getAddress())) {
+                            String found = device.getName();
+                            if (found != null && !found.isBlank()) name = found;
+                            break;
+                        }
+                    } catch (SecurityException ignored) {
+                        // Bluetooth permission could have been removed meanwhile.
+                    }
+                }
+            }
+            names.add(name.replace('\n', ' ').replace('\r', ' ').trim());
+        }
+        names.sort(String.CASE_INSENSITIVE_ORDER);
+
+        // Aligned device-name rows, each truncated visually with an ellipsis.
+        for (String name : names) {
+            TextView deviceName = body(parent, name);
+            deviceName.setTextSize(15);
+            deviceName.setTextColor(color(R.color.ui_control_accent));
+            deviceName.setSingleLine(true);
+            deviceName.setEllipsize(TextUtils.TruncateAt.END);
+            deviceName.setPadding(dp(12), dp(2), 0, 0);
+            deviceName.setContentDescription(name);
+        }
     }
 
     private void scheduleHomeStatus() {
