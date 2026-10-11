@@ -112,4 +112,20 @@
     <string name="about_notice">Für den Hintergrundbetrieb sind passende Android-Berechtigungen und Akku-Einstellungen erforderlich. Beachte unterwegs stets die Verkehrsregeln.</string>
     <string name="about_version_title">Version</string>
     <string name="about_version_inline">v%1$s</string>
+    <string name="action_back">Zurück</string>
+    <string name="page_battery">Akkuoptimierung</string>
+    <string name="page_display">Darstellung</string>
+    <string name="settings_display_hint">Helles, dunkles oder systemabhängiges Design auswählen.</string>
+    <string name="battery_unrestricted_title">Uneingeschränkte Akkunutzung</string>
+    <string name="battery_unrestricted_explanation">Damit Rideadent im Hintergrund zuverlässiger überwachen kann, ist die Freigabe durch Android nötig.</string>
+    <string name="battery_unrestricted_action">Nutzung uneingeschränkt zulassen</string>
+    <string name="battery_unused_title">App bei Nichtnutzung pausieren</string>
+    <string name="battery_unused_explanation">Android kann länger nicht genutzte Apps pausieren und Berechtigungen zurücksetzen. Deaktiviere diese Funktion für Rideadent in den Systemeinstellungen.</string>
+    <string name="battery_unused_action">Bei Nichtnutzung nicht pausieren</string>
+    <string name="setting_already_active">Bereits erledigt.</string>
+    <string name="display_theme_title">Design</string>
+    <string name="display_theme_explanation">Wähle, wie Rideadent angezeigt wird. Systemstandard übernimmt die Geräteeinstellung.</string>
+    <string name="display_system">Systemstandard</string>
+    <string name="display_light">Hell</string>
+    <string name="display_dark">Dunkel</string>
 </resources>

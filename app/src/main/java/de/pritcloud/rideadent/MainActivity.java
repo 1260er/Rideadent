@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
+import android.app.UiModeManager;
 import android.app.role.RoleManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -22,11 +23,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.view.WindowInsets;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -39,6 +42,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -50,11 +54,16 @@ public class MainActivity extends Activity {
         DEVICES,
         AUTOMATIONS,
         PERMISSIONS,
+        BATTERY,
+        DISPLAY,
         DIAGNOSTICS,
         ABOUT
     }
 
     private Page currentPage = Page.HOME;
+    private final ArrayDeque<Page> pageHistory = new ArrayDeque<>();
+    private final OnBackInvokedCallback backGestureCallback = this::goBack;
+    private ImageButton backButton;
     private LinearLayout content;
     private TextView pageTitle;
     private boolean firstResume = true;
@@ -95,6 +104,22 @@ public class MainActivity extends Activity {
                 .putBoolean("runtime_enabled", true)
                 .apply();
 
+        if (state != null) {
+            String restoredPage = state.getString("rideadent_current_page");
+            if (restoredPage != null) {
+                try { currentPage = Page.valueOf(restoredPage); }
+                catch (IllegalArgumentException ignored) { currentPage = Page.HOME; }
+            }
+            ArrayList<String> savedHistory = state.getStringArrayList("rideadent_page_history");
+            if (savedHistory != null) {
+                for (String name : savedHistory) {
+                    try { pageHistory.addLast(Page.valueOf(name)); }
+                    catch (IllegalArgumentException ignored) { /* skip obsolete page */ }
+                }
+            }
+        }
+        getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT, backGestureCallback);
         draw();
 
         if (!wasRuntime
@@ -127,6 +152,22 @@ public class MainActivity extends Activity {
         statusHandler.removeCallbacks(statusTask);
         super.onPause();
     }
+
+    @Override
+    protected void onDestroy() {
+        getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backGestureCallback);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putString("rideadent_current_page", currentPage.name());
+        ArrayList<String> names = new ArrayList<>();
+        for (Page page : pageHistory) names.add(page.name());
+        state.putStringArrayList("rideadent_page_history", names);
+    }
+
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
@@ -163,6 +204,13 @@ public class MainActivity extends Activity {
         header.addView(pageTitle,
                 new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
+        backButton = new ImageButton(this);
+        backButton.setImageResource(R.drawable.ic_rideadent_back);
+        backButton.setImageTintList(ColorStateList.valueOf(color(R.color.ui_control_accent)));
+        backButton.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        backButton.setContentDescription(getString(R.string.action_back));
+        backButton.setOnClickListener(view -> goBack());
+        header.addView(backButton, new LinearLayout.LayoutParams(dp(52), dp(52)));
         root.addView(header);
 
         ScrollView scroll = new ScrollView(this);
@@ -235,7 +283,18 @@ public class MainActivity extends Activity {
     }
 
     private void navigate(Page page) {
+        if (page == currentPage) return;
+        pageHistory.push(currentPage);
         currentPage = page;
+        renderCurrentPage();
+    }
+
+    private void goBack() {
+        if (pageHistory.isEmpty()) {
+            finish();
+            return;
+        }
+        currentPage = pageHistory.pop();
         renderCurrentPage();
     }
 
@@ -266,6 +325,14 @@ public class MainActivity extends Activity {
                 pageTitle.setText(R.string.page_permissions);
                 renderPermissions();
                 break;
+            case BATTERY:
+                pageTitle.setText(R.string.page_battery);
+                renderBattery();
+                break;
+            case DISPLAY:
+                pageTitle.setText(R.string.page_display);
+                renderDisplay();
+                break;
             case DIAGNOSTICS:
                 pageTitle.setText(R.string.page_diagnostics);
                 renderDiagnostics();
@@ -280,6 +347,13 @@ public class MainActivity extends Activity {
                 renderHome();
                 break;
         }
+        boolean subpage = currentPage == Page.DEVICES
+                || currentPage == Page.AUTOMATIONS
+                || currentPage == Page.PERMISSIONS
+                || currentPage == Page.BATTERY
+                || currentPage == Page.DISPLAY
+                || currentPage == Page.DIAGNOSTICS;
+        backButton.setVisibility(subpage ? View.VISIBLE : View.INVISIBLE);
         updateNavigation();
     }
 
@@ -288,14 +362,17 @@ public class MainActivity extends Activity {
                 R.string.page_permissions, R.string.settings_permissions_hint,
                 () -> navigate(Page.PERMISSIONS));
         settingsNavigationCard(R.drawable.ic_rideadent_battery,
-                R.string.permission_battery, R.string.settings_battery_hint,
-                this::openAppSettings);
+                R.string.page_battery, R.string.settings_battery_hint,
+                () -> navigate(Page.BATTERY));
         settingsNavigationCard(R.drawable.ic_rideadent_bluetooth,
                 R.string.page_devices, R.string.settings_devices_hint,
                 () -> navigate(Page.DEVICES));
         settingsNavigationCard(R.drawable.ic_rideadent_automations,
                 R.string.page_automations, R.string.settings_automations_hint,
                 () -> navigate(Page.AUTOMATIONS));
+        settingsNavigationCard(R.drawable.ic_rideadent_display,
+                R.string.page_display, R.string.settings_display_hint,
+                () -> navigate(Page.DISPLAY));
         settingsNavigationCard(R.drawable.ic_rideadent_diagnostics,
                 R.string.page_diagnostics, R.string.settings_diagnostics_hint,
                 () -> navigate(Page.DIAGNOSTICS));
@@ -860,6 +937,104 @@ public class MainActivity extends Activity {
         secondary(startup, getString(R.string.automation_autostart_hint));
     }
 
+    private void renderBattery() {
+        PowerManager power = getSystemService(PowerManager.class);
+        boolean unrestricted = power != null
+                && power.isIgnoringBatteryOptimizations(getPackageName());
+        LinearLayout battery = card();
+        title(battery, R.string.battery_unrestricted_title);
+        secondary(battery, getString(R.string.battery_unrestricted_explanation));
+        permissionAction(battery, R.string.battery_unrestricted_action,
+                unrestricted, this::requestUnrestrictedBattery);
+
+        boolean noPause;
+        try {
+            noPause = getPackageManager().isAutoRevokeWhitelisted();
+        } catch (SecurityException exception) {
+            noPause = false;
+        }
+        LinearLayout unused = card();
+        title(unused, R.string.battery_unused_title);
+        secondary(unused, getString(R.string.battery_unused_explanation));
+        permissionAction(unused, R.string.battery_unused_action,
+                noPause, this::openUnusedAppSettings);
+    }
+
+    private void requestUnrestrictedBattery() {
+        Intent request = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+        request.setData(Uri.fromParts("package", getPackageName(), null));
+        try {
+            startActivity(request);
+        } catch (RuntimeException exception) {
+            try {
+                startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+            } catch (RuntimeException fallback) {
+                openAppSettings();
+            }
+        }
+    }
+
+    private void openUnusedAppSettings() {
+        Intent intent = new Intent(Intent.ACTION_AUTO_REVOKE_PERMISSIONS);
+        intent.setData(Uri.fromParts("package", getPackageName(), null));
+        try {
+            startActivity(intent);
+        } catch (RuntimeException exception) {
+            openAppSettings();
+        }
+    }
+
+    private void renderDisplay() {
+        LinearLayout theme = card();
+        title(theme, R.string.display_theme_title);
+        secondary(theme, getString(R.string.display_theme_explanation));
+        String selected = Prefs.get(this).getString("appearance_theme", "system");
+        themeAction(theme, R.string.display_system, "system", selected);
+        themeAction(theme, R.string.display_light, "light", selected);
+        themeAction(theme, R.string.display_dark, "dark", selected);
+    }
+
+    private void themeAction(LinearLayout parent, int labelResource,
+                             String value, String selected) {
+        boolean checked = value.equals(selected);
+        Button choice = action(parent, labelResource, () -> {
+            if (value.equals(Prefs.get(this).getString("appearance_theme", "system"))) {
+                Toast.makeText(this, R.string.setting_already_active,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            UiModeManager modeManager = getSystemService(UiModeManager.class);
+            if (modeManager == null) return;
+            int mode = "light".equals(value) ? UiModeManager.MODE_NIGHT_NO
+                    : "dark".equals(value) ? UiModeManager.MODE_NIGHT_YES
+                    : UiModeManager.MODE_NIGHT_AUTO;
+            Prefs.get(this).edit().putString("appearance_theme", value).apply();
+            modeManager.setApplicationNightMode(mode);
+            renderCurrentPage();
+        });
+        if (checked) styleCompletedAction(choice, labelResource);
+    }
+
+    private void styleCompletedAction(Button button, int labelResource) {
+        button.setText("✓ " + getString(labelResource));
+        button.setBackgroundTintList(ColorStateList.valueOf(
+                color(R.color.ui_control_accent)));
+        button.setTextColor(0xFF202020);
+    }
+
+    private void permissionAction(LinearLayout parent, int labelResource,
+                                  boolean granted, Runnable request) {
+        Button control = action(parent, labelResource, () -> {
+            if (granted) {
+                Toast.makeText(this, R.string.setting_already_active,
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                request.run();
+            }
+        });
+        if (granted) styleCompletedAction(control, labelResource);
+    }
+
     private void renderPermissions() {
         LinearLayout runtime = card();
         title(runtime, R.string.permission_runtime_title);
@@ -880,11 +1055,19 @@ public class MainActivity extends Activity {
                 checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
                         == PackageManager.PERMISSION_GRANTED);
 
-        action(runtime, R.string.permission_request_runtime, this::requestRuntimePermissions);
+        boolean corePermissions = checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.SEND_SMS)
+                == PackageManager.PERMISSION_GRANTED;
+        permissionAction(runtime, R.string.permission_request_runtime,
+                corePermissions, this::requestRuntimePermissions);
 
-        action(runtime, R.string.permission_notification_post, () -> requestPermissions(
-                new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                11));
+        permissionAction(runtime, R.string.permission_notification_post,
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED,
+                () -> requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11));
 
         LinearLayout special = card();
 
@@ -900,39 +1083,13 @@ public class MainActivity extends Activity {
 
         status(special, R.string.permission_notification_listener, listenerAccess);
 
-        action(special, R.string.permission_call_role, this::requestCallRole);
+        permissionAction(special, R.string.permission_call_role,
+                callRole, this::requestCallRole);
 
-        action(special, R.string.permission_notification_access,
-                () -> startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
+        permissionAction(special, R.string.permission_notification_access,
+                listenerAccess, () -> startActivity(
+                        new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
 
-        LinearLayout system = card();
-
-        ActivityManager activityManager = getSystemService(ActivityManager.class);
-        PowerManager powerManager = getSystemService(PowerManager.class);
-
-        boolean restricted = activityManager != null && activityManager.isBackgroundRestricted();
-        boolean exempt = powerManager != null
-                && powerManager.isIgnoringBatteryOptimizations(getPackageName());
-
-        body(system, getString(
-                R.string.status_line,
-                getString(R.string.permission_background),
-                getString(activityManager == null
-                        ? R.string.state_unknown
-                        : restricted
-                        ? R.string.state_restricted
-                        : R.string.state_unrestricted)));
-
-        body(system, getString(
-                R.string.status_line,
-                getString(R.string.permission_battery),
-                getString(powerManager == null
-                        ? R.string.state_unknown
-                        : exempt
-                        ? R.string.state_exempt
-                        : R.string.state_optimized)));
-
-        action(system, R.string.permission_app_settings, this::openAppSettings);
     }
 
     private void status(LinearLayout parent, int label, boolean granted) {

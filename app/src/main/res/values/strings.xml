@@ -112,4 +112,20 @@
     <string name="about_notice">Suitable Android permissions and battery settings are needed for background operation. Always follow traffic rules while travelling.</string>
     <string name="about_version_title">Version</string>
     <string name="about_version_inline">v%1$s</string>
+    <string name="action_back">Go back</string>
+    <string name="page_battery">Battery optimization</string>
+    <string name="page_display">Appearance</string>
+    <string name="settings_display_hint">Choose light, dark or system appearance.</string>
+    <string name="battery_unrestricted_title">Unrestricted battery usage</string>
+    <string name="battery_unrestricted_explanation">Lets Rideadent keep its background monitoring running with fewer battery restrictions. Android must approve this setting.</string>
+    <string name="battery_unrestricted_action">Allow unrestricted battery usage</string>
+    <string name="battery_unused_title">Pause app activity if unused</string>
+    <string name="battery_unused_explanation">Android can pause rarely used apps and reset their permissions. Open the system setting and disable this for Rideadent.</string>
+    <string name="battery_unused_action">Do not pause app when unused</string>
+    <string name="setting_already_active">Already enabled.</string>
+    <string name="display_theme_title">Theme</string>
+    <string name="display_theme_explanation">Choose the appearance for Rideadent. The system option follows the device setting.</string>
+    <string name="display_system">System default</string>
+    <string name="display_light">Light</string>
+    <string name="display_dark">Dark</string>
 </resources>
