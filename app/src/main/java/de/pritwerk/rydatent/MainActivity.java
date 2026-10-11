@@ -9,11 +9,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
+import android.content.res.ColorStateList;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -24,9 +27,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +40,7 @@ import java.util.Set;
 public class MainActivity extends Activity {
     private enum Page {
         HOME,
+        SETTINGS,
         DEVICES,
         AUTOMATIONS,
         PERMISSIONS,
@@ -46,6 +52,22 @@ public class MainActivity extends Activity {
     private LinearLayout content;
     private TextView pageTitle;
     private boolean firstResume = true;
+    private final Handler statusHandler = new Handler(Looper.getMainLooper());
+    private final Runnable statusTask = new Runnable() {
+        @Override public void run() {
+            if (currentPage == Page.HOME && homeRuntime != null && !isFinishing()) {
+                updateHomeStatus();
+                statusHandler.postDelayed(this, 15000L);
+            }
+        }
+    };
+    private final LinearLayout[] navIndicators = new LinearLayout[3];
+    private final TextView[] navLabels = new TextView[3];
+    private final ImageView[] navImages = new ImageView[3];
+    private TextView homeRuntime;
+    private TextView homeService;
+    private TextView homeBlitzerBluetooth;
+    private TextView homeCallBluetooth;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -89,6 +111,13 @@ public class MainActivity extends Activity {
         getWindow().getDecorView().postDelayed(
                 () -> BlitzerWatchService.sync(this),
                 50L);
+        scheduleHomeStatus();
+    }
+
+    @Override
+    protected void onPause() {
+        statusHandler.removeCallbacks(statusTask);
+        super.onPause();
     }
 
     private int dp(int value) {
@@ -123,86 +152,105 @@ public class MainActivity extends Activity {
         pageTitle.setTextSize(28);
         pageTitle.setTextColor(color(R.color.ui_text_primary));
         pageTitle.setTypeface(pageTitle.getTypeface(), Typeface.BOLD);
+        header.addView(pageTitle,
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        header.addView(
-                pageTitle,
-                new LinearLayout.LayoutParams(
-                        0,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        1f));
-
-        ImageButton menu = new ImageButton(this);
-        menu.setImageResource(R.drawable.ic_menu);
-        menu.setBackgroundResource(android.R.drawable.list_selector_background);
-        menu.setContentDescription(getString(R.string.action_open_menu));
-
-        header.addView(
-                menu,
-                new LinearLayout.LayoutParams(dp(48), dp(48)));
-
-        menu.setOnClickListener(this::showMenu);
+        ImageButton settings = new ImageButton(this);
+        settings.setImageResource(R.drawable.ic_rydatent_settings);
+        settings.setImageTintList(ColorStateList.valueOf(color(R.color.ui_text_primary)));
+        settings.setBackgroundResource(android.R.drawable.list_selector_background);
+        settings.setContentDescription(getString(R.string.page_settings));
+        header.addView(settings, new LinearLayout.LayoutParams(dp(48), dp(48)));
+        settings.setOnClickListener(view -> navigate(Page.SETTINGS));
         root.addView(header);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setClipToPadding(false);
-
         content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(0, dp(18), 0, dp(24));
-
+        content.setPadding(0, dp(14), 0, dp(14));
         scroll.addView(content);
+        root.addView(scroll, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
-        root.addView(
-                scroll,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        0,
-                        1f));
+        LinearLayout nav = new LinearLayout(this);
+        nav.setOrientation(LinearLayout.HORIZONTAL);
+        nav.setGravity(Gravity.CENTER_VERTICAL);
+        nav.setPadding(dp(8), dp(6), dp(8), dp(6));
+        nav.setBackgroundResource(R.drawable.nav_bar_background);
+        addNavItem(nav, 0, R.drawable.ic_rydatent_home, R.string.page_home, Page.HOME);
+        addNavItem(nav, 1, R.drawable.ic_rydatent_settings, R.string.page_settings, Page.SETTINGS);
+        addNavItem(nav, 2, R.drawable.ic_rydatent_info, R.string.page_about, Page.ABOUT);
+        root.addView(nav, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(78)));
 
         setContentView(root);
         root.requestApplyInsets();
         renderCurrentPage();
     }
 
-    private void showMenu(View anchor) {
-        PopupMenu menu = new PopupMenu(this, anchor);
+    private void addNavItem(LinearLayout parent, int index, int icon, int label, Page page) {
+        LinearLayout item = new LinearLayout(this);
+        item.setOrientation(LinearLayout.VERTICAL);
+        item.setGravity(Gravity.CENTER);
+        item.setContentDescription(getString(label));
 
-        menu.getMenu().add(getString(R.string.page_home));
-        menu.getMenu().add(getString(R.string.page_devices));
-        menu.getMenu().add(getString(R.string.page_automations));
-        menu.getMenu().add(getString(R.string.page_permissions));
-        menu.getMenu().add(getString(R.string.page_diagnostics));
-        menu.getMenu().add(getString(R.string.page_about));
+        LinearLayout indicator = new LinearLayout(this);
+        indicator.setGravity(Gravity.CENTER);
+        ImageView image = new ImageView(this);
+        image.setImageResource(icon);
+        indicator.addView(image, new LinearLayout.LayoutParams(dp(22), dp(22)));
+        item.addView(indicator, new LinearLayout.LayoutParams(dp(72), dp(34)));
 
-        menu.setOnMenuItemClickListener(item -> {
-            String title = item.getTitle().toString();
+        TextView text = new TextView(this);
+        text.setText(label);
+        text.setGravity(Gravity.CENTER);
+        text.setTextSize(12);
+        LinearLayout.LayoutParams caption = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        caption.topMargin = dp(2);
+        item.addView(text, caption);
 
-            if (title.equals(getString(R.string.page_home))) {
-                currentPage = Page.HOME;
-            } else if (title.equals(getString(R.string.page_devices))) {
-                currentPage = Page.DEVICES;
-            } else if (title.equals(getString(R.string.page_automations))) {
-                currentPage = Page.AUTOMATIONS;
-            } else if (title.equals(getString(R.string.page_permissions))) {
-                currentPage = Page.PERMISSIONS;
-            } else if (title.equals(getString(R.string.page_diagnostics))) {
-                currentPage = Page.DIAGNOSTICS;
-            } else {
-                currentPage = Page.ABOUT;
-            }
+        parent.addView(item, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        navIndicators[index] = indicator;
+        navLabels[index] = text;
+        navImages[index] = image;
+        item.setOnClickListener(view -> navigate(page));
+    }
 
-            renderCurrentPage();
-            return true;
-        });
+    private void updateNavigation() {
+        int active = currentPage == Page.HOME ? 0 : currentPage == Page.ABOUT ? 2 : 1;
+        for (int i = 0; i < navLabels.length; i++) {
+            boolean selected = i == active;
+            int tint = color(selected ? R.color.ui_control_accent : R.color.ui_text_secondary);
+            navLabels[i].setTextColor(tint);
+            navLabels[i].setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
+            navImages[i].setImageTintList(ColorStateList.valueOf(tint));
+            navIndicators[i].setBackgroundResource(
+                    selected ? R.drawable.nav_active_background : 0);
+        }
+    }
 
-        menu.show();
+    private void navigate(Page page) {
+        currentPage = page;
+        renderCurrentPage();
     }
 
     private void renderCurrentPage() {
+        statusHandler.removeCallbacks(statusTask);
+        homeRuntime = null;
+        homeService = null;
+        homeBlitzerBluetooth = null;
+        homeCallBluetooth = null;
         content.removeAllViews();
 
         switch (currentPage) {
+            case SETTINGS:
+                pageTitle.setText(R.string.page_settings);
+                renderSettings();
+                break;
             case DEVICES:
                 pageTitle.setText(R.string.page_devices);
                 renderDevices();
@@ -229,6 +277,17 @@ public class MainActivity extends Activity {
                 renderHome();
                 break;
         }
+        updateNavigation();
+    }
+
+    private void renderSettings() {
+        LinearLayout settings = card();
+        title(settings, R.string.page_settings);
+        secondary(settings, getString(R.string.settings_intro));
+        action(settings, R.string.page_devices, () -> navigate(Page.DEVICES));
+        action(settings, R.string.page_automations, () -> navigate(Page.AUTOMATIONS));
+        action(settings, R.string.page_permissions, () -> navigate(Page.PERMISSIONS));
+        action(settings, R.string.page_diagnostics, () -> navigate(Page.DIAGNOSTICS));
     }
 
     private LinearLayout card() {
@@ -323,68 +382,132 @@ public class MainActivity extends Activity {
 
     private void renderHome() {
         LinearLayout hero = card();
-        TextView eyebrow = secondary(hero, getString(R.string.home_intro));
-        eyebrow.setTypeface(eyebrow.getTypeface(), Typeface.BOLD);
-        eyebrow.setTextColor(color(R.color.ui_text_primary));
+        hero.setBackgroundResource(R.drawable.home_hero_background);
+        hero.setPadding(dp(10), dp(14), dp(14), dp(14));
+        hero.setGravity(Gravity.CENTER_VERTICAL);
+        hero.setOrientation(LinearLayout.HORIZONTAL);
 
-        TextView heroTitle = body(hero, getString(R.string.home_hero_title));
-        heroTitle.setTextSize(28);
-        heroTitle.setTypeface(heroTitle.getTypeface(), Typeface.BOLD);
-        heroTitle.setPadding(0, dp(8), 0, dp(8));
+        ImageView mark = new ImageView(this);
+        mark.setImageResource(R.drawable.rydatent_hero_logo);
+        mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        hero.addView(mark, new LinearLayout.LayoutParams(dp(132), dp(142)));
 
-        secondary(hero, getString(R.string.home_hero_subtitle));
+        LinearLayout heroText = new LinearLayout(this);
+        heroText.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams heroTextParams = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        heroTextParams.leftMargin = dp(8);
+        hero.addView(heroText, heroTextParams);
+        TextView name = body(heroText, getString(R.string.app_name));
+        name.setTextSize(27);
+        name.setTypeface(null, Typeface.BOLD);
+        name.setTextColor(0xFFFFFFFF);
+        TextView subtitle = body(heroText, getString(R.string.home_hero_title));
+        subtitle.setTextSize(19);
+        subtitle.setTextColor(0xFFE2E0DE);
+        subtitle.setPadding(0, dp(8), 0, 0);
 
-        LinearLayout controls = card();
-        title(controls, R.string.home_quick_controls);
-        checkbox(controls, R.string.automation_blitzer, "blitzer_enabled");
-        checkbox(controls, R.string.automation_calls, "reply_enabled");
-        checkbox(controls, R.string.automation_autostart, "auto_start");
-
-        action(controls, R.string.action_open_devices, () -> {
-            currentPage = Page.DEVICES;
-            renderCurrentPage();
-        });
-
-        action(controls, R.string.action_open_automations, () -> {
-            currentPage = Page.AUTOMATIONS;
-            renderCurrentPage();
-        });
+        homeAutomationCard(R.drawable.ic_rydatent_camera,
+                R.string.home_blitzer_title, R.string.home_blitzer_hint, "blitzer_enabled");
+        homeAutomationCard(R.drawable.ic_rydatent_phone,
+                R.string.device_calls, R.string.home_calls_hint, "reply_enabled");
 
         LinearLayout status = card();
         title(status, R.string.home_status);
+        homeRuntime = homeStatusLine(status);
+        homeService = homeStatusLine(status);
+        homeBlitzerBluetooth = homeStatusLine(status);
+        homeCallBluetooth = homeStatusLine(status);
+        scheduleHomeStatus();
+    }
 
-        boolean serviceWanted = driveServiceWanted();
+    private TextView homeStatusLine(LinearLayout parent) {
+        TextView line = body(parent, "");
+        line.setTextSize(15);
+        line.setPadding(0, dp(7), 0, dp(7));
+        return line;
+    }
 
-        body(status, getString(
-                R.string.status_runtime,
-                getString(Prefs.runtimeEnabled(this)
-                        ? R.string.state_active
-                        : R.string.state_inactive)));
-
-        body(status, getString(
-                R.string.status_service,
-                ServiceState.label(this, serviceWanted)));
-
-        body(status, getString(
-                R.string.status_blitzer_bt,
+    private void updateHomeStatus() {
+        if (homeRuntime == null || currentPage != Page.HOME) {
+            return;
+        }
+        homeRuntime.setText(getString(R.string.status_runtime,
+                getString(Prefs.runtimeEnabled(this) ? R.string.state_active : R.string.state_inactive)));
+        homeService.setText(getString(R.string.status_service,
+                ServiceState.label(this, driveServiceWanted())));
+        homeBlitzerBluetooth.setText(getString(R.string.status_blitzer_bt,
                 getString(Prefs.connected(this, "blitzer")
-                        ? R.string.state_connected
-                        : R.string.state_disconnected)));
-
-        body(status, getString(
-                R.string.status_call_bt,
+                        ? R.string.state_connected : R.string.state_disconnected)));
+        homeCallBluetooth.setText(getString(R.string.status_call_bt,
                 getString(Prefs.connected(this, "sms")
-                        ? R.string.state_connected
-                        : R.string.state_disconnected)));
+                        ? R.string.state_connected : R.string.state_disconnected)));
+    }
 
-        secondary(status, getString(R.string.status_watchdog));
+    private void scheduleHomeStatus() {
+        statusHandler.removeCallbacks(statusTask);
+        if (currentPage == Page.HOME && homeRuntime != null && !isFinishing()) {
+            updateHomeStatus();
+            statusHandler.postDelayed(statusTask, 15000L);
+        }
+    }
 
-        action(status, R.string.action_refresh, this::renderCurrentPage);
+    private void homeAutomationCard(int iconResource, int titleResource,
+                                    int hintResource, String preferenceKey) {
+        LinearLayout card = card();
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
 
-        action(status, R.string.action_open_permissions, () -> {
-            currentPage = Page.PERMISSIONS;
-            renderCurrentPage();
+        ImageView badge = new ImageView(this);
+        badge.setImageResource(iconResource);
+        badge.setImageTintList(ColorStateList.valueOf(0xFFFFFFFF));
+        badge.setPadding(dp(12), dp(12), dp(12), dp(12));
+        badge.setBackgroundResource(R.drawable.home_icon_badge);
+        LinearLayout.LayoutParams badgeParams =
+                new LinearLayout.LayoutParams(dp(52), dp(52));
+        badgeParams.rightMargin = dp(14);
+        card.addView(badge, badgeParams);
+
+        LinearLayout descriptions = new LinearLayout(this);
+        descriptions.setOrientation(LinearLayout.VERTICAL);
+        card.addView(descriptions, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView heading = body(descriptions, getString(titleResource));
+        heading.setTypeface(null, Typeface.BOLD);
+        heading.setTextSize(17);
+        TextView state = body(descriptions, "");
+        state.setTextSize(15);
+        state.setPadding(0, dp(4), 0, dp(4));
+        TextView hint = secondary(descriptions, getString(hintResource));
+        hint.setTextSize(13);
+
+        Switch control = new Switch(this);
+        control.setContentDescription(getString(titleResource));
+        control.setShowText(false);
+        int[][] states = new int[][] { { android.R.attr.state_checked }, {} };
+        control.setThumbTintList(new ColorStateList(states,
+                new int[] { 0xFFFFFFFF, color(R.color.ui_switch_thumb_off) }));
+        control.setTrackTintList(new ColorStateList(states,
+                new int[] { color(R.color.ui_control_accent), color(R.color.ui_switch_track_off) }));
+        LinearLayout.LayoutParams controlParams =
+                new LinearLayout.LayoutParams(dp(58), dp(52));
+        controlParams.leftMargin = dp(4);
+        card.addView(control, controlParams);
+
+        boolean enabled = Prefs.get(this).getBoolean(preferenceKey, false);
+        control.setChecked(enabled);
+        updateHomeSwitchState(state, enabled);
+        control.setOnCheckedChangeListener((button, checked) -> {
+            Prefs.get(this).edit().putBoolean(preferenceKey, checked).apply();
+            BlitzerWatchService.sync(this);
+            updateHomeSwitchState(state, checked);
+            updateHomeStatus();
         });
+    }
+
+    private void updateHomeSwitchState(TextView state, boolean active) {
+        state.setText(active ? R.string.home_switch_on : R.string.home_switch_off);
+        state.setTextColor(color(active ? R.color.ui_control_accent : R.color.ui_text_secondary));
     }
 
     private void renderDevices() {

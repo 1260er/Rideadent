@@ -9,7 +9,7 @@
     <string name="page_about">Info</string>
     <string name="action_open_menu">Menü öffnen</string>
     <string name="home_intro">Fahrbegleiter</string>
-    <string name="home_hero_title">Klar und entspannt fahren.</string>
+    <string name="home_hero_title">Entspannter unterwegs</string>
     <string name="home_hero_subtitle">Bluetooth-gesteuerter Fahrmodus mit Blitzer.de-Überwachung und automatischer Anrufbehandlung.</string>
     <string name="home_quick_controls">Schnellsteuerung</string>
     <string name="home_status">Status</string>
@@ -79,4 +79,11 @@
     <string name="toast_call_role_active">Anruffilter ist bereits aktiv.</string>
     <string name="toast_call_role_unavailable">Anruffilter-Rolle ist nicht verfügbar.</string>
     <string name="toast_app_settings_unavailable">App-Einstellungen sind nicht verfügbar.</string>
+    <string name="page_settings">Einstellungen</string>
+    <string name="settings_intro">Geräte, Automationen, Berechtigungen und Diagnose verwalten.</string>
+    <string name="home_blitzer_title">Blitzer-Überwachung</string>
+    <string name="home_blitzer_hint">Startet und überwacht Blitzer.de bei Bluetooth-Verbindung.</string>
+    <string name="home_calls_hint">Weist Anrufe ab und sendet bei Bedarf eine automatische SMS.</string>
+    <string name="home_switch_on">Eingeschaltet</string>
+    <string name="home_switch_off">Ausgeschaltet</string>
 </resources>

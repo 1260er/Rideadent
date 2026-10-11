@@ -2,12 +2,15 @@
 <resources>
     <color name="ui_background">#00000000</color>
     <color name="ui_surface">#CC10131A</color>
-    <color name="ui_card_surface">#D9161A22</color>
+    <color name="ui_card_surface">#E6161A22</color>
     <color name="ui_card_border">#40FFFFFF</color>
     <color name="ui_text_primary">#FFFFFFFF</color>
     <color name="ui_text_secondary">#D6E2E7EF</color>
     <color name="ui_button_surface">#D6202631</color>
     <color name="ui_button_border">#40FFFFFF</color>
-    <color name="ui_control_accent">#FFFFFFFF</color>
+    <color name="ui_control_accent">#FFF47A22</color>
     <color name="ui_danger">#FFFFB4AB</color>
+    <color name="ui_switch_track_off">#FF53565C</color>
+    <color name="ui_switch_thumb_off">#FFB9BABD</color>
+    <color name="ui_nav_surface">#E611141A</color>
 </resources>
