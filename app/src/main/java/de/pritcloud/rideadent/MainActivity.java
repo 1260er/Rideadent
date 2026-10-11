@@ -148,6 +148,15 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (currentPage == Page.PERMISSIONS || currentPage == Page.DEVICES) {
+            renderCurrentPage();
+        }
+    }
+
+    @Override
     protected void onPause() {
         statusHandler.removeCallbacks(statusTask);
         super.onPause();
@@ -380,6 +389,12 @@ public class MainActivity extends Activity {
 
     private void settingsNavigationCard(int iconResource, int titleResource,
                                         int hintResource, Runnable onOpen) {
+        stateNavigationCard(iconResource, titleResource, hintResource, false, onOpen);
+    }
+
+    private void stateNavigationCard(int iconResource, int titleResource,
+                                     int hintResource, boolean completed,
+                                     Runnable onOpen) {
         LinearLayout item = card();
         LinearLayout.LayoutParams params =
                 (LinearLayout.LayoutParams) item.getLayoutParams();
@@ -405,9 +420,11 @@ public class MainActivity extends Activity {
         item.addView(description, new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView heading = body(description, getString(titleResource));
+        TextView heading = body(description,
+                completed ? "✓ " + getString(titleResource) : getString(titleResource));
         heading.setTypeface(null, Typeface.BOLD);
         heading.setTextSize(17);
+        if (completed) heading.setTextColor(color(R.color.ui_control_accent));
         TextView hint = secondary(description, getString(hintResource));
         hint.setTextSize(13);
         hint.setPadding(0, dp(4), 0, 0);
@@ -599,7 +616,7 @@ public class MainActivity extends Activity {
         setHomeStatusLineColor(homePermissions, R.string.status_permissions,
                 granted ? R.string.home_state_granted : R.string.home_state_missing,
                 granted ? R.color.ui_control_accent : R.color.ui_danger);
-        setHomeLink(homePermissions, !granted, view -> navigate(Page.PERMISSIONS));
+        setHomeLink(homePermissions, true, view -> navigate(Page.PERMISSIONS));
 
         // "Optimiert" is the user-facing name for unrestricted background work.
         // Android itself calls the allowlisted state "battery optimization exempt".
@@ -607,7 +624,7 @@ public class MainActivity extends Activity {
         setHomeStatusLineColor(homeBattery, R.string.status_battery,
                 unrestricted ? R.string.home_state_optimized : R.string.home_state_restricted,
                 unrestricted ? R.color.ui_control_accent : R.color.ui_danger);
-        setHomeLink(homeBattery, !unrestricted, view -> openAppSettings());
+        setHomeLink(homeBattery, true, view -> navigate(Page.BATTERY));
     }
 
     private void setHomeLink(View target, boolean enabled, View.OnClickListener onClick) {
@@ -810,14 +827,12 @@ public class MainActivity extends Activity {
     }
 
     private void renderDevices() {
-        LinearLayout intro = card();
-        secondary(intro, getString(R.string.devices_intro));
-
         if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
                 != PackageManager.PERMISSION_GRANTED) {
-            LinearLayout missing = card();
-            secondary(missing, getString(R.string.devices_permission_missing));
-            action(missing, R.string.permission_request_runtime, this::requestRuntimePermissions);
+            permissionStateCard(R.drawable.ic_rideadent_bluetooth,
+                    R.string.permission_bluetooth,
+                    R.string.devices_permission_missing,
+                    false, () -> requestSinglePermission(Manifest.permission.BLUETOOTH_CONNECT));
             return;
         }
 
@@ -833,6 +848,12 @@ public class MainActivity extends Activity {
 
         for (BluetoothDevice device : devices) {
             LinearLayout deviceCard = card();
+            LinearLayout.LayoutParams params =
+                    (LinearLayout.LayoutParams) deviceCard.getLayoutParams();
+            params.height = 0;
+            params.weight = 1f;
+            deviceCard.setLayoutParams(params);
+            deviceCard.setMinimumHeight(dp(150));
 
             String name = device.getName();
             if (name == null || name.isBlank()) {
@@ -841,7 +862,6 @@ public class MainActivity extends Activity {
 
             TextView deviceTitle = body(deviceCard, name);
             deviceTitle.setTypeface(deviceTitle.getTypeface(), Typeface.BOLD);
-
             secondary(deviceCard, device.getAddress());
 
             deviceChoice(deviceCard, R.string.device_blitzer, "blitzer", device.getAddress());
@@ -877,74 +897,92 @@ public class MainActivity extends Activity {
     }
 
     private void renderAutomations() {
-        LinearLayout blitzer = card();
-        title(blitzer, R.string.device_blitzer);
-        checkbox(blitzer, R.string.automation_blitzer, "blitzer_enabled");
-        secondary(blitzer, getString(R.string.automation_blitzer_hint));
-        action(blitzer, R.string.action_start_blitzer, () -> Blitzer.command(this, true));
-        action(blitzer, R.string.action_stop_blitzer, () -> Blitzer.command(this, false));
+        // SMS ist ein Editor, kein Toggle. Er bleibt innerhalb einer einzigen Kachel.
+        LinearLayout smsCard = card();
+        LinearLayout.LayoutParams smsParams =
+                (LinearLayout.LayoutParams) smsCard.getLayoutParams();
+        smsParams.height = 0;
+        smsParams.weight = 1f;
+        smsCard.setLayoutParams(smsParams);
+        smsCard.setMinimumHeight(dp(250));
 
-        LinearLayout calls = card();
-        title(calls, R.string.device_calls);
-        checkbox(calls, R.string.automation_calls, "reply_enabled");
-        secondary(calls, getString(R.string.automation_calls_hint));
+        LinearLayout header = new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        smsCard.addView(header);
 
-        secondary(calls, getString(R.string.sms_text_label));
+        ImageView badge = new ImageView(this);
+        badge.setImageResource(R.drawable.ic_rideadent_call_arrow);
+        badge.setImageTintList(ColorStateList.valueOf(0xFFFFFFFF));
+        badge.setPadding(dp(12), dp(12), dp(12), dp(12));
+        badge.setBackgroundResource(R.drawable.home_icon_badge);
+        LinearLayout.LayoutParams badgeParams =
+                new LinearLayout.LayoutParams(dp(52), dp(52));
+        badgeParams.rightMargin = dp(14);
+        header.addView(badge, badgeParams);
+
+        LinearLayout description = new LinearLayout(this);
+        description.setOrientation(LinearLayout.VERTICAL);
+        header.addView(description, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView heading = body(description, getString(R.string.sms_text_label));
+        heading.setTypeface(null, Typeface.BOLD);
+        heading.setTextSize(17);
+        TextView explanation = secondary(description,
+                getString(R.string.automation_sms_hint));
+        explanation.setTextSize(13);
+        explanation.setPadding(0, dp(4), 0, 0);
 
         EditText smsText = new EditText(this);
-        smsText.setText(Prefs.smsText(this));
+        // Eine leere Eingabe zeigt nur den Hinweis; im Hintergrund gibt es
+        // eine klar dokumentierte, neutrale Standardantwort.
+        String custom = Prefs.get(this).getString("sms_reply_text", "");
+        smsText.setText(custom);
+        smsText.setHint(R.string.automation_sms_placeholder);
         smsText.setTextSize(16);
         smsText.setTextColor(color(R.color.ui_text_primary));
+        smsText.setHintTextColor(color(R.color.ui_text_secondary));
         smsText.setMinLines(2);
         smsText.setMaxLines(4);
         smsText.setSingleLine(false);
         smsText.setPadding(dp(12), dp(8), dp(12), dp(8));
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textParams.topMargin = dp(10);
+        smsCard.addView(smsText, textParams);
 
-        LinearLayout.LayoutParams smsTextParams =
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-        smsTextParams.topMargin = dp(8);
+        TextView defaultNote = secondary(smsCard,
+                getString(R.string.automation_sms_default_note));
+        defaultNote.setTextSize(13);
+        defaultNote.setPadding(0, dp(6), 0, 0);
 
-        calls.addView(smsText, smsTextParams);
-
-        action(calls, R.string.action_save_sms_text, () -> {
-            boolean saved =
-                    Prefs.setSmsText(
-                            this,
-                            smsText.getText().toString());
-
+        action(smsCard, R.string.action_save_sms_text, () -> {
+            boolean saved = Prefs.setSmsText(this, smsText.getText().toString());
             if (saved) {
-                Toast.makeText(
-                        this,
-                        R.string.toast_sms_text_saved,
-                        Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this, R.string.toast_sms_text_saved,
+                        Toast.LENGTH_SHORT).show();
             } else {
-                smsText.setText(Prefs.smsText(this));
-
-                Toast.makeText(
-                        this,
-                        R.string.toast_sms_text_required,
-                        Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this, R.string.toast_sms_text_required,
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        LinearLayout startup = card();
-        title(startup, R.string.automation_autostart);
-        checkbox(startup, R.string.automation_autostart, "auto_start");
-        secondary(startup, getString(R.string.automation_autostart_hint));
+        boolean autoStart = Prefs.get(this).getBoolean("auto_start", false);
+        stateNavigationCard(R.drawable.ic_rideadent_automations,
+                R.string.automation_autostart,
+                R.string.automation_autostart_hint, autoStart, () -> {
+                    Prefs.get(this).edit().putBoolean("auto_start", !autoStart).apply();
+                    renderCurrentPage();
+                });
     }
 
     private void renderBattery() {
         PowerManager power = getSystemService(PowerManager.class);
         boolean unrestricted = power != null
                 && power.isIgnoringBatteryOptimizations(getPackageName());
-        LinearLayout battery = card();
-        title(battery, R.string.battery_unrestricted_title);
-        secondary(battery, getString(R.string.battery_unrestricted_explanation));
-        permissionAction(battery, R.string.battery_unrestricted_action,
+        permissionStateCard(R.drawable.ic_rideadent_battery,
+                R.string.battery_unrestricted_title,
+                R.string.battery_unrestricted_explanation,
                 unrestricted, this::requestUnrestrictedBattery);
 
         boolean noPause;
@@ -953,10 +991,9 @@ public class MainActivity extends Activity {
         } catch (SecurityException exception) {
             noPause = false;
         }
-        LinearLayout unused = card();
-        title(unused, R.string.battery_unused_title);
-        secondary(unused, getString(R.string.battery_unused_explanation));
-        permissionAction(unused, R.string.battery_unused_action,
+        permissionStateCard(R.drawable.ic_rideadent_battery,
+                R.string.battery_unused_action,
+                R.string.battery_unused_explanation,
                 noPause, this::openUnusedAppSettings);
     }
 
@@ -1022,9 +1059,10 @@ public class MainActivity extends Activity {
         button.setTextColor(0xFF202020);
     }
 
-    private void permissionAction(LinearLayout parent, int labelResource,
-                                  boolean granted, Runnable request) {
-        Button control = action(parent, labelResource, () -> {
+    private void permissionStateCard(int iconResource, int titleResource,
+                                     int hintResource, boolean granted,
+                                     Runnable request) {
+        stateNavigationCard(iconResource, titleResource, hintResource, granted, () -> {
             if (granted) {
                 Toast.makeText(this, R.string.setting_already_active,
                         Toast.LENGTH_SHORT).show();
@@ -1032,71 +1070,73 @@ public class MainActivity extends Activity {
                 request.run();
             }
         });
-        if (granted) styleCompletedAction(control, labelResource);
+    }
+
+    private void requestSinglePermission(String permission) {
+        requestPermissions(new String[]{permission}, 12);
+    }
+
+    private void requestDrivingNotifications(boolean androidPermissionGranted) {
+        if (!androidPermissionGranted) {
+            requestSinglePermission(Manifest.permission.POST_NOTIFICATIONS);
+            return;
+        }
+        Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        try {
+            startActivity(intent);
+        } catch (RuntimeException exception) {
+            openAppSettings();
+        }
     }
 
     private void renderPermissions() {
-        LinearLayout runtime = card();
-        title(runtime, R.string.permission_runtime_title);
-
-        status(runtime, R.string.permission_bluetooth,
+        permissionStateCard(R.drawable.ic_rideadent_bluetooth,
+                R.string.permission_bluetooth, R.string.permission_bluetooth_hint,
                 checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
-                        == PackageManager.PERMISSION_GRANTED);
-
-        status(runtime, R.string.permission_contacts,
-                checkSelfPermission(Manifest.permission.READ_CONTACTS)
-                        == PackageManager.PERMISSION_GRANTED);
-
-        status(runtime, R.string.permission_sms,
-                checkSelfPermission(Manifest.permission.SEND_SMS)
-                        == PackageManager.PERMISSION_GRANTED);
-
-        status(runtime, R.string.permission_notifications,
-                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                        == PackageManager.PERMISSION_GRANTED);
-
-        boolean corePermissions = checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
-                == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.SEND_SMS)
-                == PackageManager.PERMISSION_GRANTED;
-        permissionAction(runtime, R.string.permission_request_runtime,
-                corePermissions, this::requestRuntimePermissions);
-
-        permissionAction(runtime, R.string.permission_notification_post,
-                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
                         == PackageManager.PERMISSION_GRANTED,
-                () -> requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11));
+                () -> requestSinglePermission(Manifest.permission.BLUETOOTH_CONNECT));
 
-        LinearLayout special = card();
+        permissionStateCard(R.drawable.ic_rideadent_call_arrow,
+                R.string.permission_contacts, R.string.permission_contacts_hint,
+                checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                        == PackageManager.PERMISSION_GRANTED,
+                () -> requestSinglePermission(Manifest.permission.READ_CONTACTS));
+
+        permissionStateCard(R.drawable.ic_rideadent_call_arrow,
+                R.string.permission_sms, R.string.permission_sms_hint,
+                checkSelfPermission(Manifest.permission.SEND_SMS)
+                        == PackageManager.PERMISSION_GRANTED,
+                () -> requestSinglePermission(Manifest.permission.SEND_SMS));
+
+        boolean notificationPermissionGranted =
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED;
+        NotificationManager notificationManager =
+                getSystemService(NotificationManager.class);
+        boolean notificationsEnabled = notificationPermissionGranted
+                && notificationManager != null
+                && notificationManager.areNotificationsEnabled();
+        permissionStateCard(R.drawable.ic_rideadent_permissions,
+                R.string.permission_notifications, R.string.permission_notifications_hint,
+                notificationsEnabled,
+                () -> requestDrivingNotifications(notificationPermissionGranted));
 
         RoleManager role = getSystemService(RoleManager.class);
-        boolean callRole = role != null && role.isRoleHeld(RoleManager.ROLE_CALL_SCREENING);
-
-        status(special, R.string.permission_call_screening, callRole);
-
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        boolean listenerAccess = notificationManager != null
-                && notificationManager.isNotificationListenerAccessGranted(
-                new ComponentName(this, BlitzerListener.class));
-
-        status(special, R.string.permission_notification_listener, listenerAccess);
-
-        permissionAction(special, R.string.permission_call_role,
+        boolean callRole = role != null
+                && role.isRoleHeld(RoleManager.ROLE_CALL_SCREENING);
+        permissionStateCard(R.drawable.ic_rideadent_call_arrow,
+                R.string.permission_call_screening, R.string.permission_call_screening_hint,
                 callRole, this::requestCallRole);
 
-        permissionAction(special, R.string.permission_notification_access,
+        boolean listenerAccess = notificationManager != null
+                && notificationManager.isNotificationListenerAccessGranted(
+                        new ComponentName(this, BlitzerListener.class));
+        permissionStateCard(R.drawable.ic_rideadent_permissions,
+                R.string.permission_notification_listener,
+                R.string.permission_notification_listener_hint,
                 listenerAccess, () -> startActivity(
                         new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
-
-    }
-
-    private void status(LinearLayout parent, int label, boolean granted) {
-        body(parent, getString(
-                R.string.status_line,
-                getString(label),
-                getString(granted ? R.string.state_granted : R.string.state_missing)));
     }
 
     private void renderDiagnostics() {

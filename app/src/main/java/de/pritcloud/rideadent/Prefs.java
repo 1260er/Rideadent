@@ -12,7 +12,7 @@ final class Prefs {
     private static final int MAX_HISTORY_ENTRIES = 30;
     private static final String KEY_SMS_TEXT = "sms_reply_text";
     private static final String DEFAULT_SMS_TEXT =
-            "Ich fahre gerade Motorrad, ich rufe zurück.";
+            "Ich kann gerade nicht telefonieren. Ich melde mich später.";
     static SharedPreferences get(Context c) {
         return c.getSharedPreferences("test", Context.MODE_PRIVATE);
     }
@@ -45,7 +45,9 @@ final class Prefs {
         String value = text == null ? "" : text.trim();
 
         if (value.isEmpty()) {
-            return false;
+            // No custom SMS: use DEFAULT_SMS_TEXT via smsText()'s fallback.
+            get(c).edit().remove(KEY_SMS_TEXT).apply();
+            return true;
         }
 
         get(c)

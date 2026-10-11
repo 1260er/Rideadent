@@ -19,6 +19,9 @@
     <string name="automation_autostart_hint">Autostart wirkt beim nächsten Geräteneustart. Öffnen von Rideadent aktiviert die Automatik für die aktuelle Sitzung.</string>
     <string name="automation_blitzer_hint">Bei verbundenem ausgewähltem Bluetooth-Gerät wird Blitzer.de alle 15 Sekunden überwacht.</string>
     <string name="automation_calls_hint">Bei verbundenem ausgewähltem Bluetooth-Gerät werden eingehende Anrufe abgewiesen. Je Rufnummer kann innerhalb von 10 Minuten eine SMS gesendet werden.</string>
+    <string name="automation_sms_hint">Lege die SMS fest, die nach einer Anrufabweisung gesendet werden soll.</string>
+    <string name="automation_sms_placeholder">Hier deinen automatischen SMS-Text eingeben</string>
+    <string name="automation_sms_default_note">Ohne eigenen Text wird automatisch gesendet: „Ich kann gerade nicht telefonieren. Ich melde mich später.“</string>
     <string name="sms_text_label">Text der automatischen SMS</string>
     <string name="action_save_sms_text">SMS-Text speichern</string>
     <string name="toast_sms_text_saved">SMS-Text gespeichert.</string>
@@ -35,6 +38,12 @@
     <string name="devices_intro">Lege getrennt fest, welche gekoppelten Bluetooth-Geräte die jeweilige Automation steuern.</string>
     <string name="devices_none">Keine gekoppelten Bluetooth-Geräte gefunden.</string>
     <string name="devices_permission_missing">Für die Anzeige gekoppelter Geräte wird die Bluetooth-Berechtigung benötigt.</string>
+    <string name="permission_bluetooth_hint">Erkennt verbundene Bluetooth-Geräte für die Automationen.</string>
+    <string name="permission_contacts_hint">Ermöglicht die Namenszuordnung bei der Anrufbehandlung.</string>
+    <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
+    <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus als Android-Benachrichtigung an.</string>
+    <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>
+    <string name="permission_notification_listener_hint">Ermöglicht die Überwachung von Blitzer.de-Benachrichtigungen.</string>
     <string name="permission_runtime_title">Laufzeitberechtigungen</string>
     <string name="permission_request_runtime">Bluetooth, Kontakte und SMS anfordern</string>
     <string name="permission_call_role">Anruffilter-Rolle anfordern</string>

@@ -19,6 +19,9 @@
     <string name="automation_autostart_hint">Autostart takes effect on the next device restart. Opening Rideadent activates automation for the current session.</string>
     <string name="automation_blitzer_hint">While a selected Bluetooth device is connected, Blitzer.de is monitored every 15 seconds.</string>
     <string name="automation_calls_hint">While a selected Bluetooth device is connected, incoming calls are rejected. One SMS per caller can be sent within 10 minutes.</string>
+    <string name="automation_sms_hint">Set the message sent after an automatically rejected call.</string>
+    <string name="automation_sms_placeholder">Enter your automatic SMS message here</string>
+    <string name="automation_sms_default_note">Without a custom message, Rideadent sends this default German reply: “Ich kann gerade nicht telefonieren. Ich melde mich später.”</string>
     <string name="sms_text_label">Automatic SMS text</string>
     <string name="action_save_sms_text">Save SMS text</string>
     <string name="toast_sms_text_saved">SMS text saved.</string>
@@ -35,6 +38,12 @@
     <string name="devices_intro">Choose separately which paired Bluetooth devices control each automation.</string>
     <string name="devices_none">No paired Bluetooth devices found.</string>
     <string name="devices_permission_missing">Bluetooth permission is required to show paired devices.</string>
+    <string name="permission_bluetooth_hint">Detects connected Bluetooth devices for automations.</string>
+    <string name="permission_contacts_hint">Allows caller names to be resolved during call handling.</string>
+    <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
+    <string name="permission_notifications_hint">Displays the active driving mode as an Android notification.</string>
+    <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>
+    <string name="permission_notification_listener_hint">Allows monitoring of Blitzer.de notifications.</string>
     <string name="permission_runtime_title">Runtime permissions</string>
     <string name="permission_request_runtime">Request Bluetooth, contacts and SMS</string>
     <string name="permission_call_role">Request call screening role</string>
