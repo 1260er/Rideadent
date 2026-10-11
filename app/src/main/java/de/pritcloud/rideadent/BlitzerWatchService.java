@@ -53,9 +53,12 @@ public final class BlitzerWatchService extends Service {
 
         if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
                 != PackageManager.PERMISSION_GRANTED) {
+            // Permission may have been revoked while the service was active.
+            ServiceState.stopped(context);
+            context.stopService(service);
             Prefs.note(
                     context,
-                    "Fahrmodus nicht gestartet: Bluetooth-Berechtigung fehlt");
+                    "Fahrmodus beendet: Bluetooth-Berechtigung fehlt");
             return;
         }
 
@@ -109,6 +112,15 @@ public final class BlitzerWatchService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!driveWanted(this)) {
             ServiceState.stopped(this);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
+        // Revalidate access on Android service restarts, not only in sync().
+        if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            ServiceState.stopped(this);
+            Prefs.note(this, "Fahrmodus beendet: Bluetooth-Berechtigung fehlt");
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -168,6 +180,14 @@ public final class BlitzerWatchService extends Service {
     }
 
     private void checkAndReschedule() {
+        // A running service must not keep a fresh heartbeat after revocation.
+        if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            ServiceState.stopped(this);
+            Prefs.note(this, "Fahrmodus beendet: Bluetooth-Berechtigung fehlt");
+            stopSelf();
+            return;
+        }
         if (!driveWanted(this)) {
             ServiceState.stopped(this);
 

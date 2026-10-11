@@ -39,7 +39,7 @@
     <string name="devices_none">Keine gekoppelten Bluetooth-Geräte gefunden.</string>
     <string name="devices_permission_missing">Für die Anzeige gekoppelter Geräte wird die Bluetooth-Berechtigung benötigt.</string>
     <string name="permission_bluetooth_hint">Erkennt verbundene Bluetooth-Geräte für die Automationen.</string>
-    <string name="permission_contacts_hint">Die aktuelle Anrufautomatik verwendet den Kontaktzugriff derzeit nicht.</string>
+    <string name="permission_contacts_hint">Ermöglicht die Anrufprüfung auch bei gespeicherten Kontakten. Rideadent liest das Adressbuch nicht selbst aus.</string>
     <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
     <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus als Android-Benachrichtigung an.</string>
     <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>

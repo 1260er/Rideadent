@@ -39,7 +39,7 @@
     <string name="devices_none">No paired Bluetooth devices found.</string>
     <string name="devices_permission_missing">Bluetooth permission is required to show paired devices.</string>
     <string name="permission_bluetooth_hint">Detects connected Bluetooth devices for automations.</string>
-    <string name="permission_contacts_hint">The current call automation does not use contacts access.</string>
+    <string name="permission_contacts_hint">Allows screening calls from saved contacts. Rideadent does not read your address book itself.</string>
     <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
     <string name="permission_notifications_hint">Displays the active driving mode as an Android notification.</string>
     <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>

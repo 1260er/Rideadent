@@ -60,7 +60,14 @@ public class CallService extends CallScreeningService {
                 return;
             }
             // Rückgabe bedeutet nur, dass der Versand angestoßen wurde.
-            sms.sendTextMessage(number, null, Prefs.smsText(this), null, null);
+            String message = Prefs.smsText(this);
+            // Keep single-part SMS unchanged; use Android's segmentation for long messages.
+            java.util.ArrayList<String> parts = sms.divideMessage(message);
+            if (parts.size() > 1) {
+                sms.sendMultipartTextMessage(number, null, parts, null, null);
+            } else {
+                sms.sendTextMessage(number, null, message, null, null);
+            }
             Prefs.get(this).edit().putLong(key, now).apply();
             Prefs.note(this, "SMS angestoßen; Zustellung nicht bestätigt");
         } catch (Exception ex) {
