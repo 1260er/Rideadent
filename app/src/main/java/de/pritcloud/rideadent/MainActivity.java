@@ -1,4 +1,4 @@
-package de.pritwerk.rydatent;
+package de.pritcloud.rideadent;
 
 import android.Manifest;
 import android.app.Activity;
@@ -180,9 +180,9 @@ public class MainActivity extends Activity {
         nav.setGravity(Gravity.CENTER_VERTICAL);
         nav.setPadding(dp(8), dp(6), dp(8), dp(6));
         nav.setBackgroundResource(R.drawable.nav_bar_background);
-        addNavItem(nav, 0, R.drawable.ic_rydatent_home, R.string.page_home, Page.HOME);
-        addNavItem(nav, 1, R.drawable.ic_rydatent_settings, R.string.page_settings, Page.SETTINGS);
-        addNavItem(nav, 2, R.drawable.ic_rydatent_info, R.string.page_about, Page.ABOUT);
+        addNavItem(nav, 0, R.drawable.ic_rideadent_home, R.string.page_home, Page.HOME);
+        addNavItem(nav, 1, R.drawable.ic_rideadent_settings, R.string.page_settings, Page.SETTINGS);
+        addNavItem(nav, 2, R.drawable.ic_rideadent_info, R.string.page_about, Page.ABOUT);
         root.addView(nav, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(78)));
 
@@ -284,19 +284,19 @@ public class MainActivity extends Activity {
     }
 
     private void renderSettings() {
-        settingsNavigationCard(R.drawable.ic_rydatent_permissions,
+        settingsNavigationCard(R.drawable.ic_rideadent_permissions,
                 R.string.page_permissions, R.string.settings_permissions_hint,
                 () -> navigate(Page.PERMISSIONS));
-        settingsNavigationCard(R.drawable.ic_rydatent_battery,
+        settingsNavigationCard(R.drawable.ic_rideadent_battery,
                 R.string.permission_battery, R.string.settings_battery_hint,
                 this::openAppSettings);
-        settingsNavigationCard(R.drawable.ic_rydatent_bluetooth,
+        settingsNavigationCard(R.drawable.ic_rideadent_bluetooth,
                 R.string.page_devices, R.string.settings_devices_hint,
                 () -> navigate(Page.DEVICES));
-        settingsNavigationCard(R.drawable.ic_rydatent_automations,
+        settingsNavigationCard(R.drawable.ic_rideadent_automations,
                 R.string.page_automations, R.string.settings_automations_hint,
                 () -> navigate(Page.AUTOMATIONS));
-        settingsNavigationCard(R.drawable.ic_rydatent_diagnostics,
+        settingsNavigationCard(R.drawable.ic_rideadent_diagnostics,
                 R.string.page_diagnostics, R.string.settings_diagnostics_hint,
                 () -> navigate(Page.DIAGNOSTICS));
     }
@@ -439,7 +439,7 @@ public class MainActivity extends Activity {
         hero.setOrientation(LinearLayout.HORIZONTAL);
 
         ImageView mark = new ImageView(this);
-        mark.setImageResource(R.drawable.rydatent_hero_logo);
+        mark.setImageResource(R.drawable.rideadent_hero_logo);
         mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
         hero.addView(mark, new LinearLayout.LayoutParams(dp(132), dp(142)));
 
@@ -458,9 +458,9 @@ public class MainActivity extends Activity {
         subtitle.setTextColor(0xFFE2E0DE);
         subtitle.setPadding(0, dp(8), 0, 0);
 
-        homeAutomationCard(R.drawable.ic_rydatent_camera,
+        homeAutomationCard(R.drawable.ic_rideadent_camera,
                 R.string.home_blitzer_title, R.string.home_blitzer_hint, "blitzer_enabled");
-        homeAutomationCard(R.drawable.ic_rydatent_call_arrow,
+        homeAutomationCard(R.drawable.ic_rideadent_call_arrow,
                 R.string.device_calls, R.string.home_calls_hint, "reply_enabled");
 
         LinearLayout status = card();
@@ -960,28 +960,39 @@ public class MainActivity extends Activity {
 
     private void renderAbout() {
         LinearLayout overview = card();
-        title(overview, R.string.about_title);
-        secondary(overview, getString(R.string.about_text));
+        LinearLayout heading = new LinearLayout(this);
+        heading.setOrientation(LinearLayout.HORIZONTAL);
+        heading.setGravity(Gravity.CENTER_VERTICAL);
+        overview.addView(heading);
+
+        TextView appName = body(heading, getString(R.string.about_title));
+        appName.setTextSize(18);
+        appName.setTypeface(null, Typeface.BOLD);
+        TextView version = body(heading,
+                getString(R.string.about_version_inline, versionName()));
+        version.setTextSize(13);
+        version.setTextColor(color(R.color.ui_control_accent));
+        version.setPadding(dp(12), 0, 0, 0);
+        version.setSingleLine(true);
+
+        TextView introduction = secondary(overview, getString(R.string.about_text));
+        introduction.setPadding(0, dp(8), 0, 0);
+
+        TextView featuresHeading = body(overview, getString(R.string.about_features_title));
+        featuresHeading.setTypeface(null, Typeface.BOLD);
+        featuresHeading.setTextSize(15);
+        featuresHeading.setPadding(0, dp(14), 0, dp(5));
+        secondary(overview, getString(R.string.about_features_text));
 
         LinearLayout naming = card();
         title(naming, R.string.about_name_title);
         secondary(naming, getString(R.string.about_name_text));
-
-        LinearLayout features = card();
-        title(features, R.string.about_features_title);
-        secondary(features, getString(R.string.about_features_text));
 
         LinearLayout privacy = card();
         title(privacy, R.string.about_privacy_title);
         secondary(privacy, getString(R.string.about_privacy));
         TextView notice = secondary(privacy, getString(R.string.about_notice));
         notice.setPadding(0, dp(10), 0, 0);
-
-        LinearLayout version = card();
-        title(version, R.string.about_version_title);
-        TextView versionValue = body(version,
-                getString(R.string.about_version, versionName()));
-        versionValue.setTextColor(color(R.color.ui_control_accent));
     }
 
     private String versionName() {

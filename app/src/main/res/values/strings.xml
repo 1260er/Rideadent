@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rydatent</string>
+    <string name="app_name">Rideadent</string>
     <string name="page_home">Home</string>
     <string name="page_devices">Devices</string>
     <string name="page_automations">Automations</string>
@@ -16,7 +16,7 @@
     <string name="automation_blitzer">Blitzer.de automation</string>
     <string name="automation_calls">Reject calls and send automatic SMS</string>
     <string name="automation_autostart">Activate automatically after device restart</string>
-    <string name="automation_autostart_hint">Autostart takes effect on the next device restart. Opening Rydatent activates automation for the current session.</string>
+    <string name="automation_autostart_hint">Autostart takes effect on the next device restart. Opening Rideadent activates automation for the current session.</string>
     <string name="automation_blitzer_hint">While a selected Bluetooth device is connected, Blitzer.de is monitored every 15 seconds.</string>
     <string name="automation_calls_hint">While a selected Bluetooth device is connected, incoming calls are rejected. One SMS per caller can be sent within 10 minutes.</string>
     <string name="sms_text_label">Automatic SMS text</string>
@@ -40,7 +40,7 @@
     <string name="permission_call_role">Request call screening role</string>
     <string name="permission_notification_access">Open notification access</string>
     <string name="permission_notification_post">Allow driving mode notification</string>
-    <string name="permission_app_settings">Open Rydatent app and battery settings</string>
+    <string name="permission_app_settings">Open Rideadent app and battery settings</string>
     <string name="permission_bluetooth">Bluetooth</string>
     <string name="permission_contacts">Contacts for call screening</string>
     <string name="permission_sms">SMS sending</string>
@@ -68,14 +68,14 @@
     <string name="status_call_bt">Call BT: %1$s</string>
     <string name="status_watchdog">Service watchdog: 15 second heartbeat, stale after 45 seconds.</string>
     <string name="status_line">%1$s: %2$s</string>
-    <string name="notification_channel_drive">Rydatent driving mode</string>
+    <string name="notification_channel_drive">Rideadent driving mode</string>
     <string name="notification_drive_active">Driving mode active</string>
     <string name="diagnostics_intro">Newest events are shown first. Routine heartbeats are not logged.</string>
     <string name="diagnostics_empty">No events recorded yet.</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_title">Rydatent</string>
-    <string name="about_text">Rydatent is a driving companion for Bluetooth-triggered automations. It helps you operate fewer things manually while on the road.</string>
-    <string name="about_privacy">All automation state and diagnostic history remain local to the app. Rydatent does not process incoming SMS or messenger messages.</string>
+    <string name="about_title">Rideadent</string>
+    <string name="about_text">Rideadent is your driving assistant for Bluetooth-triggered automations on the road.</string>
+    <string name="about_privacy">Device selections, settings and diagnostic history are stored locally on the device.</string>
     <string name="toast_call_role_active">Call screening is already active.</string>
     <string name="toast_call_role_unavailable">Call screening role is not available.</string>
     <string name="toast_app_settings_unavailable">App settings are not available.</string>
@@ -104,11 +104,12 @@
     <string name="settings_devices_hint">Choose Bluetooth devices for both automations.</string>
     <string name="settings_automations_hint">Configure Blitzer.de, calls, SMS text and autostart.</string>
     <string name="settings_diagnostics_hint">View service status and recent events.</string>
-    <string name="about_name_title">The name Rydatent</string>
-    <string name="about_name_text">The name evokes “ride” and “attentive” and stands for staying attentive while travelling more comfortably.</string>
+    <string name="about_name_title">The name Ride-a-dent</string>
+    <string name="about_name_text">Ride-a-dent is a playful combination of “Ride” and “Assistant”. The hyphenated form also shows how the app name Rideadent is meant to be pronounced.</string>
     <string name="about_features_title">What does the app do?</string>
-    <string name="about_features_text">With a selected Bluetooth device connected, Rydatent can launch and monitor Blitzer.de. It can also reject incoming calls and optionally send an automatic SMS. Both automations are configurable separately.</string>
-    <string name="about_privacy_title">Privacy and usage</string>
-    <string name="about_notice">Proper Android permissions and background settings are required. Rydatent does not replace your attention or responsibility while driving.</string>
+    <string name="about_features_text">With a selected Bluetooth device connected, Rideadent can start and monitor Blitzer.de. It can also reject incoming calls and optionally send an automatic SMS. Both automations can be configured independently.</string>
+    <string name="about_privacy_title">Privacy and important information</string>
+    <string name="about_notice">Suitable Android permissions and battery settings are needed for background operation. Always follow traffic rules while travelling.</string>
     <string name="about_version_title">Version</string>
+    <string name="about_version_inline">v%1$s</string>
 </resources>

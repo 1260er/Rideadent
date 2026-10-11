@@ -1,4 +1,4 @@
-package de.pritwerk.rydatent;
+package de.pritcloud.rideadent;
 
 import android.Manifest;
 import android.app.Notification;
@@ -23,7 +23,7 @@ import android.os.SystemClock;
  * Blitzer-Automatik aktiv ist, wird im selben Takt deren Benachrichtigung geprüft.
  */
 public final class BlitzerWatchService extends Service {
-    private static final String CHANNEL = "rydatent_drive";
+    private static final String CHANNEL = "rideadent_drive";
     private static final int NOTIFICATION_ID = 1203;
 
     static final long CHECK_INTERVAL_MS = 15_000L;

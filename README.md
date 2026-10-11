@@ -1,36 +1,50 @@
-# Rydatent – Scenic UI foundation 0.1.0-dev.8
+# Rideadent — Bluetooth-basierter Fahrassistent
 
-Kein Stable-Release.
+**Ride-a-dent** verbindet als Wortspiel *Ride* (fahren) mit *Assistant* (Assistent).
+Die Schreibweise mit Bindestrichen erklärt die Aussprache des App-Namens **Rideadent**.
 
-Dev.8 baut auf dem technisch validierten Stand v0.1.0-dev.7 auf und richtet
-den UI-Grundrahmen neu aus.
+## Funktionen
 
-## Technische Basis
-- Bluetooth-Multiwahl fuer Blitzer.de und Anruf-Automatik
-- Blitzer.de Start/Stop ueber bekannte Intents
-- 15-Sekunden-Blitzer-Watchdog mit 45-Sekunden-Retry
-- CallScreeningService fuer eingehende Anrufe
-- automatische Fahr-SMS mit 10-Minuten-Sperre je Rufnummer
-- Foreground-Fahrmodusdienst
-- 15-Sekunden-Dienst-Heartbeat und 45-Sekunden-Stale-Erkennung
-- optionaler Autostart nach BOOT_COMPLETED
-- Wiederherstellung nach App-Update
-- lokale Diagnosehistorie
+- Bluetooth-Geräte getrennt für Blitzer.de-Überwachung und Anruf-Automatik auswählen
+- Blitzer.de bei passender Verbindung starten und regelmäßig überwachen
+- Eingehende Anrufe optional abweisen und bei Bedarf eine automatische SMS senden
+- Optionaler Start nach Geräteneustart
+- Fahrüberwachung mit Heartbeat, Zustandsanzeige und lokaler Diagnosehistorie
+- Deutsch und Englisch sowie helle und dunkle Darstellung
 
-## Design-Grundrahmen
-- helles Strassen-/Sonnenuntergangs-Theme als App-Hintergrund
-- Bedienoberflaeche wieder neutral, Orange nur im Motiv/Icon
-- Notch / Safe-Area sauber beruecksichtigt
-- adaptive Launcher-Icons mit Material-You-Monochromvariante
-- ueberarbeitete Startseite und Kartenoptik
-- Englisch als Default, Deutsch zusaetzlich
+Die Automationen lassen sich unabhängig voneinander aktivieren. Für manche Funktionen
+werden Android-Berechtigungen und geeignete Akku-Einstellungen benötigt.
 
-## Wichtig
-Dev.8 veraendert nicht bewusst die zugrunde liegende Automationslogik.
-Schwerpunkt dieses Schritts ist der visuelle Rahmen fuer den spaeteren
-UI-Feinschliff.
+## Android-Projekt
 
-## Lokale Qualitaetspruefung
-./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
+- Paketkennung: `de.pritcloud.rideadent`
+- Java-Paket: `de.pritcloud.rideadent`
+- Entwicklungsbranch: `dev/feasibility`
+- Entwicklungs-Releases: signierte GitHub-Prereleases für Obtainium
+- Eine Änderung der Paketkennung erfordert eine Neuinstallation. Die alte App
+  und ihre Einstellungen werden dadurch nicht automatisch übernommen.
 
-Android SDK platforms;android-37.0, Gradle 9.8.1 und AGP 9.4.0.
+## Lokale Qualitätsprüfung
+
+```sh
+./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --console=plain
+```
+
+Der GitHub-Workflow prüft außerdem die Signatur der veröffentlichten APK.
+Stable-Releases erfolgen nur nach ausdrücklicher Freigabe.
+
+---
+
+# Rideadent — Bluetooth driving assistant
+
+**Ride-a-dent** combines *Ride* and *Assistant* as a coined name. The hyphens
+illustrate how **Rideadent** is intended to be pronounced.
+
+Rideadent uses selected Bluetooth devices to monitor Blitzer.de and optionally
+handle incoming calls. Device selections, preferences and diagnostics remain on
+the device. Android background execution and permissions must be configured
+accordingly.
+
+For development builds, run the Gradle checks shown above. The debug APK is
+published as a signed GitHub prerelease after CI verification. Changing the
+Android application ID means installing the renamed app separately.

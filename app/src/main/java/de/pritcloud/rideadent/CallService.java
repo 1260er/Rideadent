@@ -1,4 +1,4 @@
-package de.pritwerk.rydatent;
+package de.pritcloud.rideadent;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

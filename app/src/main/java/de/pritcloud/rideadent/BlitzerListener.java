@@ -1,4 +1,4 @@
-package de.pritwerk.rydatent;
+package de.pritcloud.rideadent;
 
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;

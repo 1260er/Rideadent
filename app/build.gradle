@@ -1,17 +1,17 @@
 plugins { id 'com.android.application' }
-android { namespace 'de.pritwerk.rydatent'; compileSdk 37
- defaultConfig { applicationId 'de.pritwerk.rydatent'; minSdk 36; targetSdk 36; versionCode 24; versionName '0.1.0-dev.24' }
+android { namespace 'de.pritcloud.rideadent'; compileSdk 37
+ defaultConfig { applicationId 'de.pritcloud.rideadent'; minSdk 36; targetSdk 36; versionCode 25; versionName '0.1.0-dev.25' }
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 dependencies { testImplementation 'junit:junit:4.13.2' }
 
 // Persistent signing for CI development APKs.
-if (System.getenv("RYDATENT_DEV_KEYSTORE")) {
+if (System.getenv("RIDEADENT_DEV_KEYSTORE")) {
     android.signingConfigs.debug.storeFile =
-        file(System.getenv("RYDATENT_DEV_KEYSTORE"))
+        file(System.getenv("RIDEADENT_DEV_KEYSTORE"))
     android.signingConfigs.debug.storePassword =
-        System.getenv("RYDATENT_DEV_PASSWORD")
-    android.signingConfigs.debug.keyAlias = "rydatentdev"
+        System.getenv("RIDEADENT_DEV_PASSWORD")
+    android.signingConfigs.debug.keyAlias = "rideadentdev"
     android.signingConfigs.debug.keyPassword =
-        System.getenv("RYDATENT_DEV_PASSWORD")
+        System.getenv("RIDEADENT_DEV_PASSWORD")
 }
