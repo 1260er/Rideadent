@@ -50,10 +50,10 @@
     <string name="permission_notification_access">Benachrichtigungszugriff öffnen</string>
     <string name="permission_notification_post">Fahrmodus-Benachrichtigung erlauben</string>
     <string name="permission_app_settings">Rideadent-App- und Akku-Einstellungen öffnen</string>
-    <string name="permission_bluetooth">Bluetooth</string>
-    <string name="permission_contacts">Kontakte</string>
+    <string name="permission_bluetooth">Geräte in der Nähe</string>
+    <string name="permission_contacts">Kontakte und Konten</string>
     <string name="permission_sms">SMS-Versand</string>
-    <string name="permission_notifications">Fahrmodus-Benachrichtigung</string>
+    <string name="permission_notifications">Benachrichtigungen</string>
     <string name="permission_call_screening">Anruffilter</string>
     <string name="permission_notification_listener">Benachrichtigungszugriff</string>
     <string name="permission_background">Hintergrundausführung</string>

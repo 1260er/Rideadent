@@ -151,6 +151,13 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 12 && permissions.length == 1 && grantResults.length == 1) {
+            // Track actual denials, not merely whether a dialog was requested.
+            Prefs.get(this).edit()
+                    .putBoolean("permission_denied_" + permissions[0],
+                            grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                    .apply();
+        }
         if (currentPage == Page.PERMISSIONS || currentPage == Page.DEVICES) {
             renderCurrentPage();
         }
@@ -1086,15 +1093,15 @@ public class MainActivity extends Activity {
             return;
         }
 
-        // Once a permission can no longer be requested by a runtime dialog,
-        // offer the app settings instead of silently doing nothing.
-        String attemptedKey = "permission_requested_" + permission;
-        boolean attempted = Prefs.get(this).getBoolean(attemptedKey, false);
-        if (attempted && !shouldShowRequestPermissionRationale(permission)) {
+        // Request the system dialog on the first tap whenever Android allows it.
+        // Only fall back to Settings after an actual prior denial and when the
+        // platform no longer offers another permission dialog.
+        boolean previouslyDenied = Prefs.get(this).getBoolean(
+                "permission_denied_" + permission, false);
+        if (previouslyDenied && !shouldShowRequestPermissionRationale(permission)) {
             openAppSettings();
             return;
         }
-        Prefs.get(this).edit().putBoolean(attemptedKey, true).apply();
         requestPermissions(new String[]{permission}, 12);
     }
 
@@ -1159,8 +1166,24 @@ public class MainActivity extends Activity {
         permissionStateCard(R.drawable.ic_rideadent_permissions,
                 R.string.permission_notification_listener,
                 R.string.permission_notification_listener_hint,
-                listenerAccess, () -> startActivity(
-                        new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
+                listenerAccess, this::openNotificationListenerSettings);
+    }
+
+    private void openNotificationListenerSettings() {
+        // This special access has no runtime permission dialog. Android can
+        // open the details page for Rideadent's listener directly.
+        Intent details = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS);
+        details.putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
+                new ComponentName(this, BlitzerListener.class));
+        try {
+            startActivity(details);
+        } catch (RuntimeException unavailable) {
+            try {
+                startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            } catch (RuntimeException fallback) {
+                openAppSettings();
+            }
+        }
     }
 
     private void renderDiagnostics() {
