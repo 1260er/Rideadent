@@ -8,6 +8,11 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.37 – Entwicklungsversion
+
+- Startseite: Die Anzeige der aktiven Fahrüberwachung nennt Blitzer.de, Anrufautomatik oder beide ohne das redundante Wort „Aktiv“.
+- Reiner Textfeinschliff in Deutsch und Englisch; Bluetooth-, Blitzer.de- und Anruffunktionen bleiben unverändert.
+
 ### v0.1.0-dev.36 – Entwicklungsversion
 
 - Startseite aktualisiert erkannte Bluetooth-Verbindungen und den Fahrdienstzustand ereignisgesteuert; der bisherige 15-Sekunden-Abgleich bleibt erhalten.
@@ -64,6 +69,11 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.37 – Development build
+
+- Home screen: Active driving monitoring now names Blitzer.de, call automation or both without the redundant word “Active”.
+- German and English text-only refinement; Bluetooth, Blitzer.de and call handling behavior remain unchanged.
 
 ### v0.1.0-dev.36 – Development build
 

@@ -98,9 +98,9 @@
     <string name="state_automatic">Automatic</string>
     <string name="state_manual">Manual</string>
     <string name="home_state_active">Active</string>
-    <string name="home_state_active_blitzer">Active (Blitzer.de)</string>
-    <string name="home_state_active_calls">Active (call automation)</string>
-    <string name="home_state_active_both">Active (Blitzer.de and call automation)</string>
+    <string name="home_state_active_blitzer">Blitzer.de</string>
+    <string name="home_state_active_calls">Call automation</string>
+    <string name="home_state_active_both">Blitzer.de and call automation</string>
     <string name="home_state_inactive">Inactive</string>
     <string name="home_state_not_responding">Not responding</string>
     <string name="home_state_connected_with">Connected to</string>
