@@ -39,9 +39,9 @@
     <string name="devices_none">Keine gekoppelten Bluetooth-Geräte gefunden.</string>
     <string name="devices_permission_missing">Für die Anzeige gekoppelter Geräte wird die Bluetooth-Berechtigung benötigt.</string>
     <string name="permission_bluetooth_hint">Erkennt verbundene Bluetooth-Geräte für die Automationen.</string>
-    <string name="permission_contacts_hint">Ermöglicht die Anrufprüfung auch bei gespeicherten Kontakten. Rideadent liest das Adressbuch nicht selbst aus.</string>
+    <string name="permission_contacts_hint">Ermöglicht die Anrufprüfung auch bei gespeicherten Kontakten. Für Rückruf-Benachrichtigungen wird der Name zur abgewiesenen Nummer gezielt in den Kontakten gesucht.</string>
     <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
-    <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus als Android-Benachrichtigung an.</string>
+    <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus und auf Wunsch Rückrufeinträge als Android-Benachrichtigungen an.</string>
     <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>
     <string name="permission_notification_listener_hint">Ermöglicht die Überwachung von Blitzer.de-Benachrichtigungen. Die Kategorie „Unterhaltungen“ kann deaktiviert werden.</string>
     <string name="permission_runtime_title">Laufzeitberechtigungen</string>
@@ -145,4 +145,17 @@
     <string name="display_system">Systemstandard</string>
     <string name="display_light">Hell</string>
     <string name="display_dark">Dunkel</string>
+    <string name="display_callback_title">Rückruf-Benachrichtigungen</string>
+    <string name="display_callback_hint">Von Rideadent abgewiesene Anrufe erscheinen einzeln in der Benachrichtigungsleiste. Ein Tipp ruft direkt zurück. Beim Ausschalten werden offene Rückrufeinträge gelöscht.</string>
+    <string name="display_callback_switch">Rückrufe anzeigen</string>
+    <string name="callback_channel">Abgewiesene Anrufe</string>
+    <string name="callback_private_title">Abgewiesener Anruf</string>
+    <string name="callback_group_title">%1$d abgewiesene Anrufe</string>
+    <string name="callback_group_hint">Einträge zum Zurückrufen aufklappen</string>
+    <string name="callback_tap_to_call">Antippen zum direkten Rückruf</string>
+    <string name="callback_permission_title">Direkter Rückruf</string>
+    <string name="callback_permission_hint">Erlaubt direkte Rückrufe aus den Benachrichtigungen. Nur nach dem Antippen eines Eintrags wird eine Nummer gewählt.</string>
+    <string name="callback_permission_needed">Für den direkten Rückruf ist die Telefonberechtigung erforderlich.</string>
+    <string name="callback_grant_permission">Telefonberechtigung erteilen</string>
+    <string name="callback_call_failed">Rückruf konnte nicht gestartet werden.</string>
 </resources>

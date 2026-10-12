@@ -166,6 +166,7 @@ public class MainActivity extends Activity {
                 () -> BlitzerWatchService.sync(this),
                 50L);
         scheduleHomeStatus();
+        CallbackNotifications.refresh(this);
     }
 
     @Override
@@ -179,7 +180,8 @@ public class MainActivity extends Activity {
                             grantResults[0] != PackageManager.PERMISSION_GRANTED)
                     .apply();
         }
-        if (currentPage == Page.PERMISSIONS || currentPage == Page.DEVICES) {
+        if (currentPage == Page.PERMISSIONS || currentPage == Page.DEVICES
+                || currentPage == Page.DISPLAY) {
             renderCurrentPage();
         }
     }
@@ -759,7 +761,10 @@ public class MainActivity extends Activity {
                 || checkSelfPermission(Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED
+                || (CallbackNotifications.enabled(this)
+                && checkSelfPermission(Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED)) {
             return false;
         }
 
@@ -1168,6 +1173,28 @@ public class MainActivity extends Activity {
         themeAction(theme, R.string.display_system, "system", selected);
         themeAction(theme, R.string.display_light, "light", selected);
         themeAction(theme, R.string.display_dark, "dark", selected);
+
+        LinearLayout callbackCard = card();
+        title(callbackCard, R.string.display_callback_title);
+        secondary(callbackCard, getString(R.string.display_callback_hint));
+        Switch callbackSwitch = new Switch(this);
+        callbackSwitch.setText(R.string.display_callback_switch);
+        callbackSwitch.setTextSize(16);
+        callbackSwitch.setTextColor(color(R.color.ui_text_primary));
+        callbackSwitch.setChecked(CallbackNotifications.enabled(this));
+        callbackSwitch.setPadding(0, dp(12), 0, dp(12));
+        callbackCard.addView(callbackSwitch);
+        callbackSwitch.setOnCheckedChangeListener((button, checked) -> {
+            CallbackNotifications.setEnabled(this, checked);
+            renderCurrentPage();
+        });
+        if (CallbackNotifications.enabled(this)
+                && checkSelfPermission(Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            secondary(callbackCard, getString(R.string.callback_permission_needed));
+            action(callbackCard, R.string.callback_grant_permission,
+                    () -> requestSinglePermission(Manifest.permission.CALL_PHONE));
+        }
     }
 
     private void themeAction(LinearLayout parent, int labelResource,
@@ -1265,6 +1292,14 @@ public class MainActivity extends Activity {
                 checkSelfPermission(Manifest.permission.READ_CONTACTS)
                         == PackageManager.PERMISSION_GRANTED,
                 () -> requestSinglePermission(Manifest.permission.READ_CONTACTS));
+
+        if (CallbackNotifications.enabled(this)) {
+            permissionStateCard(R.drawable.ic_rideadent_call_arrow,
+                    R.string.callback_permission_title, R.string.callback_permission_hint,
+                    checkSelfPermission(Manifest.permission.CALL_PHONE)
+                            == PackageManager.PERMISSION_GRANTED,
+                    () -> requestSinglePermission(Manifest.permission.CALL_PHONE));
+        }
 
         permissionStateCard(R.drawable.ic_rideadent_call_arrow,
                 R.string.permission_sms, R.string.permission_sms_hint,

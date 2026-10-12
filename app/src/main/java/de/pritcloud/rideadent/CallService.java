@@ -35,6 +35,15 @@ public class CallService extends CallScreeningService {
                 : new CallResponse.Builder().build();
         respondToCall(call, response);
         Prefs.note(this, reject ? "Anrufabweisung angefordert" : "Anruf zugelassen");
+        // Add-on only: an error in the callback list must never affect SMS handling.
+        // The call-screening response has already been delivered to Android.
+        if (reject) {
+            try {
+                CallbackNotifications.rejected(this, call.getHandle());
+            } catch (RuntimeException ignored) {
+                Prefs.note(this, "Rückruf-Benachrichtigung nicht verfügbar");
+            }
+        }
 
         if (!reject) return;
         if (number == null || number.isBlank()) {

@@ -8,6 +8,14 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.40 – Entwicklungsversion
+
+- Neue Rückruf-Benachrichtigungen für von Rideadent abgewiesene Anrufe; standardmäßig eingeschaltet und unter Einstellungen → Darstellung abschaltbar.
+- Einzelne Benachrichtigungen zeigen bekannte Kontaktnamen oder die Rufnummer und ermöglichen einen direkten Rückruf per Antippen mit Android-Telefonberechtigung.
+- Nach dem gestarteten Rückruf verschwindet nur der ausgewählte Eintrag. Andere offene Rückrufe bleiben erhalten und werden lokal gespeichert.
+- Gruppierte Benachrichtigungen, Schutz persönlicher Daten auf dem Sperrbildschirm und Wiederherstellung nach einem Neustart.
+- Die optionale Rückrufverarbeitung erfolgt im Hintergrund. Anrufabweisung, SMS-Wiederholsperre, Bluetooth-Automation und Blitzer.de-Überwachung bleiben unverändert.
+
 ### v0.1.0-dev.39 – Entwicklungsversion
 
 - Die Startseite reagiert unmittelbar auf das Erscheinen und Entfernen der Blitzer.de-Benachrichtigung; die Farbprüfung nutzt weiterhin den tatsächlichen Android-Benachrichtigungsstatus.
@@ -82,6 +90,14 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.40 – Development build
+
+- New callback notifications for calls rejected by Rideadent, enabled by default and configurable under Settings → Appearance.
+- Individual notifications show contact names when available or the phone number and allow direct calling by tapping, with Android phone permission.
+- After starting a callback, only the selected entry is removed. Other pending callbacks remain and are stored locally.
+- Grouped notifications, lock-screen privacy protection and restoration after a device restart.
+- Optional callback processing runs in the background. Call screening, SMS cooldown, Bluetooth automation and Blitzer.de monitoring remain unchanged.
 
 ### v0.1.0-dev.39 – Development build
 

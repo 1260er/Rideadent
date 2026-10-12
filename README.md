@@ -26,11 +26,14 @@ Rideadent ist ein Bluetooth-basierter Fahrassistent. / Rideadent is a Bluetooth-
 
 Die beiden Fahrfunktionen können unabhängig voneinander aktiviert und Bluetooth-Geräten zugeordnet werden.
 
+**Rückruf-Benachrichtigungen (standardmäßig an):** Von Rideadent abgewiesene Anrufe werden als lokale Rückrufeinträge gespeichert und getrennt angezeigt; bekannte Kontakte mit Namen. Antippen startet mit Android-Telefonberechtigung direkt einen Anruf und entfernt den gewählten Eintrag. Unter **Einstellungen → Darstellung** lässt sich die Funktion deaktivieren; beim Abschalten werden offene Rückrufeinträge gelöscht. Auf dem Sperrbildschirm werden keine Nummern oder Namen gezeigt. Die Telefonberechtigung `CALL_PHONE` ist zusätzlich erforderlich.
+
+
 ### Voraussetzungen und Berechtigungen
 
 - **Android 16 oder neuer** (mindestens API 36); Bluetooth-Hardware und für die jeweilige Automatik passende Geräte.
 - **Bluetooth („Geräte in der Nähe“):** Verbindungen ausgewählter Geräte erkennen.
-- **Anrufprüfung und Kontakte:** Android benötigt die Rolle für die Anrufprüfung; `READ_CONTACTS` ermöglicht auch die Prüfung von Anrufen gespeicherter Kontakte. Rideadent liest das Adressbuch nicht selbst aus.
+- **Anrufprüfung und Kontakte:** Android benötigt die Rolle für die Anrufprüfung; `READ_CONTACTS` ermöglicht auch die Prüfung von Anrufen gespeicherter Kontakte. Für die optionale Rückrufliste sucht Rideadent nach einer abgewiesenen Rufnummer gezielt den Kontaktnamen.
 - **SMS:** `SEND_SMS` für automatische Antworten; SMS können Kosten verursachen. Versand bedeutet nicht bestätigte Zustellung.
 - **Benachrichtigungen:** Erlaubnis für die Fahrmodus-Benachrichtigung und Benachrichtigungszugriff zur Erkennung der Blitzer.de-Benachrichtigung. Die Kategorie **„Unterhaltungen“** kann beim Benachrichtigungszugriff deaktiviert werden.
 - **Hintergrundbetrieb:** Abhängig von Android-Einstellungen kann es nötig sein, die Akkubeschränkungen für Rideadent anzupassen.
@@ -39,7 +42,7 @@ Die beiden Fahrfunktionen können unabhängig voneinander aktiviert und Bluetoot
 
 ### Datenschutz
 
-Geräteauswahl, Einstellungen und Diagnoseverlauf bleiben lokal auf dem Gerät. Die App besitzt keine Internet-Berechtigung. Android-Backups sind deaktiviert. Für automatische SMS werden Rufnummern und Zeitpunkte der letzten Sendeversuche lokal zur Wiederholsperre gespeichert.
+Geräteauswahl, Einstellungen und Diagnoseverlauf bleiben lokal auf dem Gerät. Die App besitzt keine Internet-Berechtigung. Android-Backups sind deaktiviert. Für automatische SMS werden Rufnummern und Zeitpunkte der letzten Sendeversuche lokal zur Wiederholsperre gespeichert. Bei eingeschalteten Rückruf-Benachrichtigungen werden zusätzlich die abgewiesenen Nummern, gegebenenfalls Kontaktnamen und Zeitpunkte lokal gespeichert, bis der Rückruf gestartet oder die Funktion deaktiviert wird.
 
 ### Installation und Entwicklung
 
@@ -81,11 +84,14 @@ GitHub Actions führt dieselben Qualitätsprüfungen durch und überprüft die S
 
 The two driving features can be enabled independently and assigned to different Bluetooth devices.
 
+**Callback notifications (enabled by default):** Rejected calls are saved locally and shown as separate notification entries, using contact names where available. Tapping an entry starts a direct phone call and removes that entry. The option can be disabled under **Settings → Appearance**, which also clears pending callbacks. Phone numbers and names are hidden on the lock screen. Direct calling requires Android’s `CALL_PHONE` permission.
+
+
 ### Requirements and permissions
 
 - **Android 16 or later** (minimum API 36), Bluetooth hardware and compatible devices for the chosen automation.
 - **Bluetooth (Nearby devices):** Detect connections to selected devices.
-- **Call screening and contacts:** Android requires the call-screening role; `READ_CONTACTS` allows screening calls from saved contacts as well. Rideadent does not read the address book itself.
+- **Call screening and contacts:** Android requires the call-screening role; `READ_CONTACTS` allows screening calls from saved contacts as well. For the optional callback list, Rideadent looks up contact names only for rejected numbers.
 - **SMS:** `SEND_SMS` is required for automatic replies. Carrier charges may apply; initiating a message is not confirmation of delivery.
 - **Notifications:** Permission for the driving-mode notification and notification access for detecting Blitzer.de notifications. The **Conversations** notification-access category can be disabled.
 - **Background operation:** Android battery restrictions may need to be adjusted for reliable monitoring.
@@ -94,7 +100,7 @@ The two driving features can be enabled independently and assigned to different 
 
 ### Privacy
 
-Device selections, settings and diagnostic history are stored locally. The app does not request internet access, and Android backups are disabled. For automatic SMS, phone numbers and the times of previous send attempts are stored locally to enforce the cooldown.
+Device selections, settings and diagnostic history are stored locally. The app does not request internet access, and Android backups are disabled. For automatic SMS, phone numbers and the times of previous send attempts are stored locally to enforce the cooldown. When callback notifications are enabled, rejected numbers, optional contact names and timestamps are also stored locally until called back or the feature is disabled.
 
 ### Installation and development
 

@@ -39,9 +39,9 @@
     <string name="devices_none">No paired Bluetooth devices found.</string>
     <string name="devices_permission_missing">Bluetooth permission is required to show paired devices.</string>
     <string name="permission_bluetooth_hint">Detects connected Bluetooth devices for automations.</string>
-    <string name="permission_contacts_hint">Allows screening calls from saved contacts. Rideadent does not read your address book itself.</string>
+    <string name="permission_contacts_hint">Allows screening calls from saved contacts. Callback notifications look up the contact name only for a rejected number.</string>
     <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
-    <string name="permission_notifications_hint">Displays the active driving mode as an Android notification.</string>
+    <string name="permission_notifications_hint">Shows driving mode and optional callback entries as Android notifications.</string>
     <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>
     <string name="permission_notification_listener_hint">Allows monitoring of Blitzer.de notifications. The “Conversations” category can be disabled.</string>
     <string name="permission_runtime_title">Runtime permissions</string>
@@ -145,4 +145,17 @@
     <string name="display_system">System default</string>
     <string name="display_light">Light</string>
     <string name="display_dark">Dark</string>
+    <string name="display_callback_title">Callback notifications</string>
+    <string name="display_callback_hint">Calls rejected by Rideadent appear individually in notifications. Tap an entry to call directly. Turning this off clears pending callbacks.</string>
+    <string name="display_callback_switch">Show callbacks</string>
+    <string name="callback_channel">Rejected calls</string>
+    <string name="callback_private_title">Rejected call</string>
+    <string name="callback_group_title">%1$d rejected calls</string>
+    <string name="callback_group_hint">Expand entries to call back</string>
+    <string name="callback_tap_to_call">Tap to call back directly</string>
+    <string name="callback_permission_title">Direct callback</string>
+    <string name="callback_permission_hint">Allows calling directly from a notification. No call is placed until you tap an entry.</string>
+    <string name="callback_permission_needed">Phone permission is required for direct callbacks.</string>
+    <string name="callback_grant_permission">Grant phone permission</string>
+    <string name="callback_call_failed">Could not start the callback.</string>
 </resources>
