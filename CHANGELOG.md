@@ -8,6 +8,13 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.36 – Entwicklungsversion
+
+- Startseite aktualisiert erkannte Bluetooth-Verbindungen und den Fahrdienstzustand ereignisgesteuert; der bisherige 15-Sekunden-Abgleich bleibt erhalten.
+- Fahrüberwachung benennt jetzt die tatsächlich aktive Funktion: Blitzer.de, Anrufautomatik oder beide.
+- Beim Umschalten der Blitzer-Überwachung wird bei erkanntem Bluetooth-Gerät sofort der passende Start- oder Stopp-Befehl gesendet, auch wenn die Anrufautomatik weiterläuft.
+- Regressionstests für wiederholtes Umschalten sowie fehlende Bluetooth-Verbindung und deaktivierten Laufzeitmodus ergänzt.
+
 ### v0.1.0-dev.35 – Entwicklungsversion
 
 - Automationen: Die Kacheln für SMS-Text und Autostart richten ihre Höhe nach dem Inhalt; die Funktionen bleiben unverändert.
@@ -57,6 +64,13 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.36 – Development build
+
+- The home screen now refreshes on detected Bluetooth and driving-service state changes, while retaining the existing 15-second backup refresh.
+- Driving status identifies the actually active function: Blitzer.de, call automation, or both.
+- Switching Blitzer monitoring on or off sends the corresponding start/stop command immediately when a selected Bluetooth device is known as connected, independently of call automation.
+- Added regression tests for repeated toggling, disconnected Bluetooth and disabled runtime.
 
 ### v0.1.0-dev.35 – Development build
 

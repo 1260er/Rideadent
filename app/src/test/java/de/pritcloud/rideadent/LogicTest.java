@@ -110,6 +110,29 @@ public class LogicTest {
     }
 
     @Test
+    public void blitzerToggleStartsAndStopsWhenDeviceIsConnected() {
+        assertTrue(Logic.shouldSendBlitzerToggleCommand(true, true, false, true));
+        assertTrue(Logic.shouldSendBlitzerToggleCommand(true, true, true, false));
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(true, true, true, true));
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(true, true, false, false));
+    }
+
+    @Test
+    public void blitzerToggleDoesNotCommandWithoutRuntimeOrConnection() {
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(true, false, true, false));
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(true, false, false, true));
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(false, true, true, false));
+        assertFalse(Logic.shouldSendBlitzerToggleCommand(false, true, false, true));
+    }
+
+    @Test
+    public void blitzerAndCallsCanRemainIndependentlyActive() {
+        assertTrue(Logic.shouldRunDriveService(true, false, true, true, true));
+        assertTrue(Logic.shouldRunDriveService(true, true, true, false, true));
+        assertFalse(Logic.shouldRunDriveService(true, false, true, false, true));
+    }
+
+    @Test
     public void absenceAllowsRestartWithoutPreviousNotification() {
         assertTrue(
                 Logic.shouldRestartMissingNotification(

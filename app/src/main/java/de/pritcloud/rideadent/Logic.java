@@ -39,6 +39,15 @@ public final class Logic {
                 runtimeEnabled, callEnabled, callConnected);
     }
 
+    // Send a start/stop intent only when the selected, connected Blitzer
+    // automation really crosses the enabled/disabled boundary.
+    public static boolean shouldSendBlitzerToggleCommand(
+            boolean runtimeEnabled, boolean connected,
+            boolean previouslyEnabled, boolean nowEnabled) {
+        return shouldWatchBlitzer(runtimeEnabled, previouslyEnabled, connected)
+                != shouldWatchBlitzer(runtimeEnabled, nowEnabled, connected);
+    }
+
     public static boolean shouldRestartMissingNotification(
             boolean runtimeEnabled,
             boolean enabled,

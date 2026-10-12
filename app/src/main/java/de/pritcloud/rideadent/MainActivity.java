@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.res.ColorStateList;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -77,6 +78,20 @@ public class MainActivity extends Activity {
             }
         }
     };
+    // Refresh the visible home screen as soon as Android connection or service
+    // state changes. This does not trigger a Bluetooth connection or polling.
+    private final Runnable homeEventTask = () -> {
+        if (currentPage == Page.HOME && !isFinishing()) {
+            updateHomeStatus();
+        }
+    };
+    private final SharedPreferences.OnSharedPreferenceChangeListener homeChangeListener =
+            (preferences, key) -> {
+                if ("connected".equals(key) || "heartbeat".equals(key)) {
+                    statusHandler.removeCallbacks(homeEventTask);
+                    statusHandler.post(homeEventTask);
+                }
+            };
     private final LinearLayout[] navIndicators = new LinearLayout[3];
     private final TextView[] navLabels = new TextView[3];
     private final ImageView[] navImages = new ImageView[3];
@@ -135,6 +150,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Listen only while the Activity is in the foreground.
+        Prefs.get(this).registerOnSharedPreferenceChangeListener(homeChangeListener);
+        getSharedPreferences("service_state", MODE_PRIVATE)
+                .registerOnSharedPreferenceChangeListener(homeChangeListener);
 
         if (firstResume) {
             firstResume = false;
@@ -166,6 +185,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        Prefs.get(this).unregisterOnSharedPreferenceChangeListener(homeChangeListener);
+        getSharedPreferences("service_state", MODE_PRIVATE)
+                .unregisterOnSharedPreferenceChangeListener(homeChangeListener);
+        statusHandler.removeCallbacks(homeEventTask);
         statusHandler.removeCallbacks(statusTask);
         super.onPause();
     }
@@ -611,15 +634,24 @@ public class MainActivity extends Activity {
                 automatic ? R.color.ui_success : R.color.ui_text_secondary);
         setHomeLink(homeRuntime, true, view -> navigate(Page.AUTOMATIONS));
 
-        // Distinguish inactive from the critical case: wanted but unresponsive.
+        // Name only the functions that are actually enabled, connected and
+        // running. The service heartbeat must be fresh before reporting Active.
+        boolean runtime = Prefs.runtimeEnabled(this);
+        boolean blitzerWanted = Logic.shouldWatchBlitzer(
+                runtime, Prefs.get(this).getBoolean("blitzer_enabled", false),
+                Prefs.connected(this, "blitzer"));
+        boolean callsWanted = Logic.shouldRejectCall(
+                runtime, Prefs.get(this).getBoolean("reply_enabled", false),
+                Prefs.connected(this, "sms"));
         boolean needed = driveServiceWanted();
         boolean responding = needed && ServiceState.isFresh(this);
+        int serviceLabel = !needed ? R.string.home_state_inactive
+                : !responding ? R.string.home_state_not_responding
+                : blitzerWanted && callsWanted ? R.string.home_state_active_both
+                : blitzerWanted ? R.string.home_state_active_blitzer
+                : R.string.home_state_active_calls;
         setHomeStatusLineColor(homeService, R.string.status_service,
-                !needed ? R.string.home_state_inactive
-                        : responding ? R.string.home_state_active
-                                     : R.string.home_state_not_responding,
-                !needed ? R.color.ui_danger
-                         : responding ? R.color.ui_success : R.color.ui_danger);
+                serviceLabel, !needed || !responding ? R.color.ui_danger : R.color.ui_success);
         setHomeLink(homeService, needed && !responding,
                 view -> navigate(Page.DIAGNOSTICS));
 
@@ -854,7 +886,17 @@ public class MainActivity extends Activity {
         control.setChecked(enabled);
         updateHomeSwitchState(state, enabled);
         control.setOnCheckedChangeListener((button, checked) -> {
+            // Take a fresh snapshot on every click; the initial 'enabled'
+            // variable becomes stale when the switch is toggled repeatedly.
+            boolean previouslyEnabled = Prefs.get(this).getBoolean(preferenceKey, false);
+            boolean sendBlitzerCommand = "blitzer_enabled".equals(preferenceKey)
+                    && Logic.shouldSendBlitzerToggleCommand(
+                    Prefs.runtimeEnabled(this), Prefs.connected(this, "blitzer"),
+                    previouslyEnabled, checked);
             Prefs.get(this).edit().putBoolean(preferenceKey, checked).apply();
+            // Disabling Blitzer must send STOP even if call automation keeps
+            // the shared driving service alive. Never touch call handling here.
+            if (sendBlitzerCommand) Blitzer.command(this, checked);
             BlitzerWatchService.sync(this);
             updateHomeSwitchState(state, checked);
             updateHomeStatus();
