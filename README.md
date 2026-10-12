@@ -19,6 +19,7 @@ Rideadent ist ein Bluetooth-basierter Fahrassistent. / Rideadent is a Bluetooth-
 - **Getrennte Bluetooth-Auswahl:** Geräte individuell für Blitzer.de und die Anrufautomatik festlegen.
 - **Blitzer.de:** Bei passender Bluetooth-Verbindung einen Startbefehl senden und die aktive Blitzer.de-Benachrichtigung regelmäßig prüfen.
 - **Anrufautomatik:** Eingehende Anrufe bei aktiver Automatik abweisen und, soweit möglich, eine automatische SMS senden; mit 10-Minuten-Wiederholsperre pro Rufnummer.
+- **Rückruf-Benachrichtigungen:** Pro abgewiesener Rufnummer ein Eintrag mit dem letzten Anrufzeitpunkt; direkte Rückrufe per Antippen. Der Eintrag wird nach dem Rückruf entfernt. Die gesamte Kachel unter „Darstellung“ schaltet die Funktion um (standardmäßig an).
 - **Längere SMS:** Mehrteilige Nachrichten werden über Androids SMS-Funktionen unterstützt.
 - **Startverhalten:** Nach einem Geräteneustart die Automatik wahlweise aktivieren; eine erneute Bluetooth-Verbindungsbenachrichtigung kann nötig sein.
 - **Fahrmodus:** Hintergrunddienst mit Statusanzeige, Heartbeat und lokaler Diagnosehistorie.
@@ -77,6 +78,7 @@ GitHub Actions führt dieselben Qualitätsprüfungen durch und überprüft die S
 - **Separate Bluetooth selections:** Assign devices independently to Blitzer.de monitoring and call automation.
 - **Blitzer.de:** Send a start command on a matching Bluetooth connection and periodically check for an active Blitzer.de notification.
 - **Call automation:** Reject incoming calls when enabled and, where possible, send an automatic SMS with a ten-minute cooldown per phone number.
+- **Callback notifications:** One entry per rejected caller number, showing the latest call time and supporting direct tap-to-call. The entry disappears after the callback is initiated. The whole card under Appearance toggles the feature (enabled by default).
 - **Long messages:** Supports multipart SMS through Android's SMS APIs.
 - **Startup behavior:** Optionally enable automation after reboot; a fresh Bluetooth connection event may be required.
 - **Driving mode:** Background service with status display, heartbeat and on-device diagnostic history.

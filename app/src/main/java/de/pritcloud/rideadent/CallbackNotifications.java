@@ -11,12 +11,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.text.format.DateFormat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -122,11 +124,60 @@ final class CallbackNotifications {
 
     private static synchronized int add(Context c, String phone) {
         if (!enabled(c)) return -1;
-        List<Entry> list = entries(c);
+        List<Entry> list = consolidatedEntries(c);
         int next = c.getSharedPreferences(PREF, Context.MODE_PRIVATE).getInt(NEXT_ID, 1);
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < list.size(); i++) {
+            Entry previous = list.get(i);
+            if (CallbackRules.sameNumber(previous.phone, phone)) {
+                // Preserve the notification/PendingIntent ID for this number.
+                // Move it to the newest position with the last call time.
+                list.remove(i);
+                list.add(new Entry(previous.id, phone, previous.name, now));
+                return persist(c, list, next) ? previous.id : -1;
+            }
+        }
         if (next <= 0 || next == Integer.MAX_VALUE) return -1;
-        list.add(new Entry(next, phone, "", System.currentTimeMillis()));
+        list.add(new Entry(next, phone, "", now));
         return persist(c, list, next + 1) ? next : -1;
+    }
+
+    // Also fold duplicate entries saved by dev.40, preserving one callback ID.
+    // The latest timestamp wins. Failed persistence leaves old data untouched.
+    private static synchronized List<Entry> consolidatedEntries(Context c) {
+        List<Entry> original = entries(c);
+        List<Entry> merged = new ArrayList<>();
+        List<Integer> obsoleteIds = new ArrayList<>();
+        for (Entry item : original) {
+            int existingIndex = -1;
+            for (int i = 0; i < merged.size(); i++) {
+                if (CallbackRules.sameNumber(merged.get(i).phone, item.phone)) {
+                    existingIndex = i;
+                    break;
+                }
+            }
+            if (existingIndex < 0) {
+                merged.add(item);
+                continue;
+            }
+            Entry existing = merged.remove(existingIndex);
+            Entry latest = item.time >= existing.time ? item : existing;
+            String name = !latest.name.isBlank() ? latest.name
+                    : !existing.name.isBlank() ? existing.name : item.name;
+            merged.add(new Entry(existing.id, latest.phone, name,
+                    Math.max(existing.time, item.time)));
+            if (item.id != existing.id) obsoleteIds.add(item.id);
+        }
+        if (!obsoleteIds.isEmpty()) {
+            int next = c.getSharedPreferences(PREF, Context.MODE_PRIVATE)
+                    .getInt(NEXT_ID, 1);
+            if (!persist(c, merged, next)) return original;
+            NotificationManager manager = c.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                for (int id : obsoleteIds) manager.cancel(TAG, id);
+            }
+        }
+        return merged;
     }
 
     private static String lookupName(Context c, String phone) {
@@ -189,15 +240,22 @@ final class CallbackNotifications {
         } else refresh(c);
     }
 
+    private static String lastCallTime(Context c, long timestamp) {
+        Date date = new Date(timestamp);
+        return DateFormat.getDateFormat(c).format(date) + " "
+                + DateFormat.getTimeFormat(c).format(date);
+    }
+
     static synchronized void refresh(Context c) {
-        if (!enabled(c)
-                || c.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED) return;
+        if (!enabled(c)) return;
+        // Consolidate legacy entries even when posting notifications is denied.
+        List<Entry> list = consolidatedEntries(c);
+        if (c.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) return;
         NotificationManager manager = c.getSystemService(NotificationManager.class);
         if (manager == null || !manager.areNotificationsEnabled()) return;
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,
                 c.getString(R.string.callback_channel), NotificationManager.IMPORTANCE_DEFAULT));
-        List<Entry> list = entries(c);
         if (list.isEmpty()) {
             manager.cancel(TAG, 0);
             return;
@@ -215,7 +273,9 @@ final class CallbackNotifications {
             Notification.Builder item = new Notification.Builder(c, CHANNEL)
                     .setSmallIcon(android.R.drawable.sym_call_missed)
                     .setContentTitle(e.label())
-                    .setContentText(c.getString(R.string.callback_tap_to_call))
+                    .setContentText(c.getString(R.string.callback_last_call,
+                            lastCallTime(c, e.time)))
+                    .setSubText(c.getString(R.string.callback_tap_to_call))
                     .setWhen(e.time)
                     .setOnlyAlertOnce(true)
                     .setAutoCancel(false)
@@ -228,7 +288,8 @@ final class CallbackNotifications {
         if (grouped) {
             Notification.InboxStyle inbox = new Notification.InboxStyle();
             for (int i = Math.max(0, list.size() - 5); i < list.size(); i++) {
-                inbox.addLine(list.get(i).label());
+                Entry entry = list.get(i);
+                inbox.addLine(entry.label() + " · " + lastCallTime(c, entry.time));
             }
             Notification summary = new Notification.Builder(c, CHANNEL)
                     .setSmallIcon(android.R.drawable.sym_call_missed)

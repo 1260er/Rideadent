@@ -146,13 +146,14 @@
     <string name="display_light">Hell</string>
     <string name="display_dark">Dunkel</string>
     <string name="display_callback_title">Rückruf-Benachrichtigungen</string>
-    <string name="display_callback_hint">Von Rideadent abgewiesene Anrufe erscheinen einzeln in der Benachrichtigungsleiste. Ein Tipp ruft direkt zurück. Beim Ausschalten werden offene Rückrufeinträge gelöscht.</string>
+    <string name="display_callback_hint">Abgewiesene Anrufe erscheinen einmal pro Rufnummer mit der Zeit des letzten Anrufs. Antippen ruft direkt zurück. Ausschalten löscht offene Rückrufe.</string>
     <string name="display_callback_switch">Rückrufe anzeigen</string>
     <string name="callback_channel">Abgewiesene Anrufe</string>
     <string name="callback_private_title">Abgewiesener Anruf</string>
     <string name="callback_group_title">%1$d abgewiesene Anrufe</string>
     <string name="callback_group_hint">Einträge zum Zurückrufen aufklappen</string>
     <string name="callback_tap_to_call">Antippen zum direkten Rückruf</string>
+    <string name="callback_last_call">Letzter Anruf: %1$s</string>
     <string name="callback_permission_title">Direkter Rückruf</string>
     <string name="callback_permission_hint">Erlaubt direkte Rückrufe aus den Benachrichtigungen. Nur nach dem Antippen eines Eintrags wird eine Nummer gewählt.</string>
     <string name="callback_permission_needed">Für den direkten Rückruf ist die Telefonberechtigung erforderlich.</string>

@@ -8,6 +8,13 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.41 – Entwicklungsversion
+
+- Darstellung: Die gesamte Rückruf-Benachrichtigungskachel schaltet die Funktion ein oder aus, mit orangefarbener Markierung und Haken bei Aktivierung. Standardmäßig bleibt sie eingeschaltet.
+- Rückrufliste: Mehrere abgewiesene Anrufe derselben Rufnummer werden zu einem Eintrag zusammengefasst; der Zeitpunkt des letzten Anrufs wird angezeigt. Auch bisher gespeicherte Doppeleinträge werden zusammengeführt.
+- Startseite: Bei eingeschalteter Blitzer.de- und Anrufautomatik ist der Schalterpunkt orange; ausgeschaltet bleiben die bisherigen Farben erhalten.
+- Anrufabweisung, automatische SMS, direkter Rückruf, Bluetooth-Steuerung und Blitzer.de-Watchdog bleiben unverändert.
+
 ### v0.1.0-dev.40 – Entwicklungsversion
 
 - Neue Rückruf-Benachrichtigungen für von Rideadent abgewiesene Anrufe; standardmäßig eingeschaltet und unter Einstellungen → Darstellung abschaltbar.
@@ -90,6 +97,13 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.41 – Development build
+
+- Appearance: Tap the entire callback-notification card to toggle the feature, with an orange highlight and checkmark when enabled. It remains enabled by default.
+- Callback list: Repeated rejected calls from the same phone number are combined into one entry showing the most recent call time. Previously saved duplicate entries are also consolidated.
+- Home: The enabled Blitzer.de and call-automation switches now use an orange thumb; off-state colors remain unchanged.
+- Call rejection, automatic SMS, direct callback, Bluetooth control and the Blitzer.de watchdog remain unchanged.
 
 ### v0.1.0-dev.40 – Development build
 

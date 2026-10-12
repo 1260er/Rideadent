@@ -9,6 +9,14 @@ public class CallbackRulesTest {
         assertEquals("03012345", CallbackRules.dialNumber("030 123-45"));
         assertEquals("1234", CallbackRules.dialNumber("1234"));
     }
+    @Test public void comparesSameCallerAcrossFormats() {
+        assertTrue(CallbackRules.sameNumber("+49 (30) 123-456", "+4930123456"));
+        assertTrue(CallbackRules.sameNumber("0049 30 123456", "+49-30-123456"));
+        assertTrue(CallbackRules.sameNumber("030 123-456", "030123456"));
+        assertFalse(CallbackRules.sameNumber("030123456", "030123457"));
+        assertFalse(CallbackRules.sameNumber("112", "112"));
+        assertFalse(CallbackRules.sameNumber(null, "+4930123456"));
+    }
     @Test public void rejectsDangerousOrUncallableTargets() {
         assertNull(CallbackRules.dialNumber(null));
         assertNull(CallbackRules.dialNumber(""));

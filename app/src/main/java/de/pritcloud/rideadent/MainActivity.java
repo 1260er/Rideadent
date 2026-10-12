@@ -926,9 +926,9 @@ public class MainActivity extends Activity {
         control.setShowText(false);
         int[][] states = new int[][] { { android.R.attr.state_checked }, {} };
         control.setThumbTintList(new ColorStateList(states,
-                new int[] { 0xFFFFFFFF, color(R.color.ui_switch_thumb_off) }));
+                new int[] { color(R.color.ui_control_accent), color(R.color.ui_switch_thumb_off) }));
         control.setTrackTintList(new ColorStateList(states,
-                new int[] { color(R.color.ui_control_accent), color(R.color.ui_switch_track_off) }));
+                new int[] { color(R.color.ui_switch_track_on), color(R.color.ui_switch_track_off) }));
         LinearLayout.LayoutParams controlParams =
                 new LinearLayout.LayoutParams(dp(58), dp(52));
         controlParams.leftMargin = dp(4);
@@ -1174,25 +1174,21 @@ public class MainActivity extends Activity {
         themeAction(theme, R.string.display_light, "light", selected);
         themeAction(theme, R.string.display_dark, "dark", selected);
 
-        LinearLayout callbackCard = card();
-        title(callbackCard, R.string.display_callback_title);
-        secondary(callbackCard, getString(R.string.display_callback_hint));
-        Switch callbackSwitch = new Switch(this);
-        callbackSwitch.setText(R.string.display_callback_switch);
-        callbackSwitch.setTextSize(16);
-        callbackSwitch.setTextColor(color(R.color.ui_text_primary));
-        callbackSwitch.setChecked(CallbackNotifications.enabled(this));
-        callbackSwitch.setPadding(0, dp(12), 0, dp(12));
-        callbackCard.addView(callbackSwitch);
-        callbackSwitch.setOnCheckedChangeListener((button, checked) -> {
-            CallbackNotifications.setEnabled(this, checked);
-            renderCurrentPage();
-        });
-        if (CallbackNotifications.enabled(this)
-                && checkSelfPermission(Manifest.permission.CALL_PHONE)
-                        != PackageManager.PERMISSION_GRANTED) {
-            secondary(callbackCard, getString(R.string.callback_permission_needed));
-            action(callbackCard, R.string.callback_grant_permission,
+        // The entire card toggles, like the Autostart card on Automations.
+        boolean callbacksOn = CallbackNotifications.enabled(this);
+        stateNavigationCard(R.drawable.ic_rideadent_call_arrow,
+                R.string.display_callback_title, R.string.display_callback_hint,
+                callbacksOn, true, () -> {
+                    CallbackNotifications.setEnabled(this,
+                            !CallbackNotifications.enabled(this));
+                    renderCurrentPage();
+                });
+        // Keep the existing direct-call permission entry visible when needed.
+        if (callbacksOn && checkSelfPermission(Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            LinearLayout permission = card();
+            secondary(permission, getString(R.string.callback_permission_needed));
+            action(permission, R.string.callback_grant_permission,
                     () -> requestSinglePermission(Manifest.permission.CALL_PHONE));
         }
     }

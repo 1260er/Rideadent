@@ -4,6 +4,17 @@ package de.pritcloud.rideadent;
 final class CallbackRules {
     private CallbackRules() {}
 
+    // Compare only validated numbers; punctuation and international 00/+ formats
+    // must not create separate callback entries. No country-code guessing.
+    static boolean sameNumber(String first, String second) {
+        String a = dialNumber(first);
+        String b = dialNumber(second);
+        if (a == null || b == null) return false;
+        if (a.startsWith("00")) a = "+" + a.substring(2);
+        if (b.startsWith("00")) b = "+" + b.substring(2);
+        return a.equals(b);
+    }
+
     static String dialNumber(String value) {
         if (value == null || value.isBlank() || value.length() > 48) return null;
         StringBuilder digits = new StringBuilder();

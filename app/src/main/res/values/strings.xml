@@ -146,13 +146,14 @@
     <string name="display_light">Light</string>
     <string name="display_dark">Dark</string>
     <string name="display_callback_title">Callback notifications</string>
-    <string name="display_callback_hint">Calls rejected by Rideadent appear individually in notifications. Tap an entry to call directly. Turning this off clears pending callbacks.</string>
+    <string name="display_callback_hint">Rejected calls appear once per phone number, with the latest call time. Tap to call directly. Turning this off clears pending callbacks.</string>
     <string name="display_callback_switch">Show callbacks</string>
     <string name="callback_channel">Rejected calls</string>
     <string name="callback_private_title">Rejected call</string>
     <string name="callback_group_title">%1$d rejected calls</string>
     <string name="callback_group_hint">Expand entries to call back</string>
     <string name="callback_tap_to_call">Tap to call back directly</string>
+    <string name="callback_last_call">Last call: %1$s</string>
     <string name="callback_permission_title">Direct callback</string>
     <string name="callback_permission_hint">Allows calling directly from a notification. No call is placed until you tap an entry.</string>
     <string name="callback_permission_needed">Phone permission is required for direct callbacks.</string>

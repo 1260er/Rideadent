@@ -12,6 +12,7 @@
     <color name="ui_danger">#FFFFB4AB</color>
     <color name="ui_success">#FF65D995</color>
     <color name="ui_warning">#FFFFCB66</color>
+    <color name="ui_switch_track_on">#FF674630</color>
     <color name="ui_switch_track_off">#FF53565C</color>
     <color name="ui_switch_thumb_off">#FFB9BABD</color>
     <color name="ui_nav_surface">#E611141A</color>
