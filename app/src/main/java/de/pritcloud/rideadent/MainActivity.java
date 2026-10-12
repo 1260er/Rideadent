@@ -3,6 +3,7 @@ package de.pritcloud.rideadent;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.app.UiModeManager;
 import android.app.role.RoleManager;
@@ -402,11 +403,18 @@ public class MainActivity extends Activity {
     private void stateNavigationCard(int iconResource, int titleResource,
                                      int hintResource, boolean completed,
                                      Runnable onOpen) {
+        stateNavigationCard(iconResource, titleResource, hintResource, completed,
+                false, onOpen);
+    }
+
+    private void stateNavigationCard(int iconResource, int titleResource,
+                                     int hintResource, boolean completed,
+                                     boolean wrapContent, Runnable onOpen) {
         LinearLayout item = card();
         LinearLayout.LayoutParams params =
                 (LinearLayout.LayoutParams) item.getLayoutParams();
-        params.height = 0;
-        params.weight = 1f;
+        params.height = wrapContent ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        params.weight = wrapContent ? 0f : 1f;
         item.setLayoutParams(params);
         item.setMinimumHeight(dp(90));
         item.setOrientation(LinearLayout.HORIZONTAL);
@@ -983,24 +991,40 @@ public class MainActivity extends Activity {
     }
 
     private void renderBattery() {
-        PowerManager power = getSystemService(PowerManager.class);
-        boolean unrestricted = power != null
-                && power.isIgnoringBatteryOptimizations(getPackageName());
+        // Use precisely the same battery condition as the home status line.
+        boolean unrestricted = isHomeBatteryUnrestricted();
         permissionStateCard(R.drawable.ic_rideadent_battery,
                 R.string.battery_unrestricted_title,
                 R.string.battery_unrestricted_explanation,
                 unrestricted, this::requestUnrestrictedBattery);
 
-        boolean noPause;
-        try {
-            noPause = getPackageManager().isAutoRevokeWhitelisted();
-        } catch (SecurityException exception) {
-            noPause = false;
-        }
+        boolean noPause = isUnusedAppPauseDisabled();
         permissionStateCard(R.drawable.ic_rideadent_battery,
                 R.string.battery_unused_title,
                 R.string.battery_unused_explanation,
                 noPause, this::openUnusedAppSettings);
+    }
+
+    private boolean isUnusedAppPauseDisabled() {
+        // Official Android API: exemption from automatic permission revocation.
+        try {
+            if (getPackageManager().isAutoRevokeWhitelisted()) return true;
+        } catch (RuntimeException ignored) {
+            // Some Android variants cannot answer this query.
+        }
+
+        // Read-only fallback for the same system setting. Only MODE_IGNORED
+        // means auto-revocation is disabled; never infer a grant from an
+        // unknown/default mode. No system setting is changed.
+        AppOpsManager ops = getSystemService(AppOpsManager.class);
+        if (ops == null) return false;
+        try {
+            return ops.checkOp("android:auto_revoke_permissions_if_unused",
+                    android.os.Process.myUid(), getPackageName())
+                    == AppOpsManager.MODE_IGNORED;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
     }
 
     private void requestUnrestrictedBattery() {
@@ -1074,7 +1098,7 @@ public class MainActivity extends Activity {
     private void permissionStateCard(int iconResource, int titleResource,
                                      int hintResource, boolean granted,
                                      Runnable request) {
-        stateNavigationCard(iconResource, titleResource, hintResource, granted, () -> {
+        stateNavigationCard(iconResource, titleResource, hintResource, granted, true, () -> {
             if (granted) {
                 Toast.makeText(this, R.string.setting_already_active,
                         Toast.LENGTH_SHORT).show();
