@@ -1,5 +1,6 @@
 package de.pritcloud.rideadent;
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,7 +10,24 @@ public class BtReceiver extends BroadcastReceiver {
  @Override public void onReceive(Context c,Intent i) {
   if (i == null) return;
   String action = i.getAction();
-  final boolean connected;
+   // A powered-off radio cannot have usable ACL connections. This broadcast
+   // is handled independently of per-device ACL events (which can be lost).
+   if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+    int state = i.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+    if (state != BluetoothAdapter.STATE_TURNING_OFF
+            && state != BluetoothAdapter.STATE_OFF) return;
+    boolean hadBlitzer = Logic.shouldRun(
+            Prefs.recordedActive(c), Prefs.chosen(c, "blitzer"));
+    Prefs.clearActive(c);
+    if (hadBlitzer && Prefs.runtimeEnabled(c)
+            && Prefs.get(c).getBoolean("blitzer_enabled", false)) {
+     Blitzer.command(c, false);
+    }
+    Prefs.note(c, "Bluetooth ausgeschaltet: Verbindungsstatus gelöscht");
+    BlitzerWatchService.sync(c);
+    return;
+   }
+   final boolean connected;
   if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
    connected = true;
   } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {

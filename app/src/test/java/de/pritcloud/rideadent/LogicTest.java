@@ -19,6 +19,17 @@ public class LogicTest {
     }
 
     @Test
+    public void bluetoothRadioOffCannotUsePreviouslyRecordedConnections() {
+        Set<String> recorded = Set.of("A", "B");
+        Set<String> chosen = Set.of("B");
+        assertTrue(Logic.shouldRun(Logic.effectiveActive(recorded, true), chosen));
+        assertFalse(Logic.shouldRun(Logic.effectiveActive(recorded, false), chosen));
+        assertTrue(Logic.effectiveActive(recorded, false).isEmpty());
+        assertEquals(recorded, Logic.effectiveActive(recorded, true));
+        assertEquals(recorded, Set.of("A", "B"));
+    }
+
+    @Test
     public void callAutomationRequiresRuntimeEnabledAndConnected() {
         assertFalse(
                 Logic.shouldRejectCall(

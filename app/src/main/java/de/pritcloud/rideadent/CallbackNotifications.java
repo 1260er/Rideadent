@@ -19,7 +19,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -103,13 +105,21 @@ final class CallbackNotifications {
         if (!enabled(c) || handle == null || !"tel".equalsIgnoreCase(handle.getScheme())) return;
         String phone = CallbackRules.dialNumber(handle.getSchemeSpecificPart());
         if (phone == null) return; // No private/unknown/SIP/USSD callback targets.
-        // Never delay call screening or its SMS logic with disk, notification,
-        // or contact-provider operations. The whole add-on uses a worker.
+        // Android's screening response has ALREADY been sent. Persist the
+        // callback immediately, so a process kill cannot discard a queued,
+        // never-started background task. Errors remain isolated from SMS.
         Context app = c.getApplicationContext();
+        final int id;
+        try {
+            id = add(app, phone);
+        } catch (RuntimeException ignored) {
+            Prefs.note(app, "Rückruf konnte nicht gespeichert werden");
+            return;
+        }
+        if (id <= 0) return;
+        // Contact lookups and notification posting stay off the call thread.
         WORK.execute(() -> {
             try {
-                int id = add(app, phone);
-                if (id <= 0) return;
                 refresh(app);
                 String name = lookupName(app, phone);
                 if (name != null && !name.isBlank()) {
@@ -117,7 +127,20 @@ final class CallbackNotifications {
                     refresh(app);
                 }
             } catch (RuntimeException ignored) {
-                // Never let optional callback handling disrupt call screening.
+                Prefs.note(app, "Rückruf-Benachrichtigung nicht verfügbar");
+            }
+        });
+    }
+
+    // UI/boot restores need not do JSON scans or post notifications on their
+    // main / broadcast thread. The stored queue is already durable.
+    static void scheduleRefresh(Context c) {
+        Context app = c.getApplicationContext();
+        WORK.execute(() -> {
+            try {
+                refresh(app);
+            } catch (RuntimeException ignored) {
+                Prefs.note(app, "Rückruf-Aktualisierung nicht verfügbar");
             }
         });
     }
@@ -142,42 +165,41 @@ final class CallbackNotifications {
         return persist(c, list, next + 1) ? next : -1;
     }
 
-    // Also fold duplicate entries saved by dev.40, preserving one callback ID.
-    // The latest timestamp wins. Failed persistence leaves old data untouched.
+    // Fold duplicate entries saved by dev.40 in linear rather than quadratic
+    // time. Keep the first callback ID and latest timestamp/name, preserving
+    // one independently clickable Android PendingIntent per unique number.
     private static synchronized List<Entry> consolidatedEntries(Context c) {
         List<Entry> original = entries(c);
-        List<Entry> merged = new ArrayList<>();
+        Map<String, Entry> merged = new LinkedHashMap<>();
         List<Integer> obsoleteIds = new ArrayList<>();
+        boolean changed = false;
         for (Entry item : original) {
-            int existingIndex = -1;
-            for (int i = 0; i < merged.size(); i++) {
-                if (CallbackRules.sameNumber(merged.get(i).phone, item.phone)) {
-                    existingIndex = i;
-                    break;
-                }
-            }
-            if (existingIndex < 0) {
-                merged.add(item);
+            String key = CallbackRules.identity(item.phone);
+            if (key == null) continue;
+            Entry existing = merged.remove(key);
+            if (existing == null) {
+                merged.put(key, item);
                 continue;
             }
-            Entry existing = merged.remove(existingIndex);
+            changed = true;
             Entry latest = item.time >= existing.time ? item : existing;
             String name = !latest.name.isBlank() ? latest.name
                     : !existing.name.isBlank() ? existing.name : item.name;
-            merged.add(new Entry(existing.id, latest.phone, name,
+            merged.put(key, new Entry(existing.id, latest.phone, name,
                     Math.max(existing.time, item.time)));
             if (item.id != existing.id) obsoleteIds.add(item.id);
         }
-        if (!obsoleteIds.isEmpty()) {
+        List<Entry> list = new ArrayList<>(merged.values());
+        if (changed) {
             int next = c.getSharedPreferences(PREF, Context.MODE_PRIVATE)
                     .getInt(NEXT_ID, 1);
-            if (!persist(c, merged, next)) return original;
+            if (!persist(c, list, next)) return original;
             NotificationManager manager = c.getSystemService(NotificationManager.class);
             if (manager != null) {
                 for (int id : obsoleteIds) manager.cancel(TAG, id);
             }
         }
-        return merged;
+        return list;
     }
 
     private static String lookupName(Context c, String phone) {

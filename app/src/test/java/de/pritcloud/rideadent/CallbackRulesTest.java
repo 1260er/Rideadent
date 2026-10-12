@@ -17,6 +17,17 @@ public class CallbackRulesTest {
         assertFalse(CallbackRules.sameNumber("112", "112"));
         assertFalse(CallbackRules.sameNumber(null, "+4930123456"));
     }
+    @Test public void identityMatchesOnlyValidatedEquivalentNumbers() {
+        assertEquals("+4930123456", CallbackRules.identity("0049 30 123456"));
+        assertEquals("+4930123456", CallbackRules.identity("+49 (30) 123456"));
+        assertEquals("030123456", CallbackRules.identity("030 123-456"));
+        assertTrue(CallbackRules.sameNumber("004930123456", "+4930123456"));
+        // Local and international spelling MUST NOT be guessed as identical.
+        assertFalse(CallbackRules.sameNumber("030123456", "+4930123456"));
+        assertNull(CallbackRules.identity("sip:foo@example.org"));
+        assertNull(CallbackRules.identity("112"));
+    }
+
     @Test public void rejectsDangerousOrUncallableTargets() {
         assertNull(CallbackRules.dialNumber(null));
         assertNull(CallbackRules.dialNumber(""));

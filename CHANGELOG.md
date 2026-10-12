@@ -8,6 +8,14 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.42 – Entwicklungsversion
+
+- Anrufsicherheit: Die Antwort an Android erfolgt vor dem Diagnose-Logging. Die Anrufabweisung bleibt unabhängig vom SMS-Versand und von Rückruf-Benachrichtigungen.
+- SMS-Sicherheit: Ungültige und bekannte deutsche Sonderrufnummern werden für automatische SMS ausgeschlossen; unterschiedliche internationale Schreibweisen verwenden dieselbe 10-Minuten-Sperre. Gleichzeitige SMS-Versuche werden abgesichert. Es gibt keine globale SMS-Stundenbegrenzung.
+- Bluetooth-Zuverlässigkeit: Beim Ausschalten von Bluetooth werden veraltete Verbindungseinträge ungültig und gegebenenfalls der Blitzer.de-Stopp ausgelöst. Nach erneutem Einschalten kann ein neues Verbindungsereignis erforderlich sein; einzelne verlorene Geräte-Trennungsereignisse sind nicht vollständig erkennbar.
+- Rückrufe: Abgewiesene Nummern werden unmittelbar nach der Anrufentscheidung lokal gespeichert; Kontaktnamen und Benachrichtigungen werden anschließend im Hintergrund verarbeitet. Doppelte Rückrufeinträge bleiben zusammengefasst.
+- Texte und Dokumentation: Deutsche und englische Hilfetexte, Berechtigungshinweise, Statusformulierungen und README aktualisiert. Keine neuen Oberflächenfunktionen.
+
 ### v0.1.0-dev.41 – Entwicklungsversion
 
 - Darstellung: Die gesamte Rückruf-Benachrichtigungskachel schaltet die Funktion ein oder aus, mit orangefarbener Markierung und Haken bei Aktivierung. Standardmäßig bleibt sie eingeschaltet.
@@ -97,6 +105,14 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.42 – Development build
+
+- Call safety: Android receives the screening response before diagnostic logging. Call rejection remains independent of SMS delivery and callback notifications.
+- SMS safety: Invalid and known German special-service destinations are excluded from automatic replies; equivalent international formats share the same ten-minute cooldown. Concurrent SMS attempts are guarded. There is no global hourly SMS limit.
+- Bluetooth reliability: Turning Bluetooth off invalidates stale connection entries and sends a Blitzer.de stop command when applicable. Reconnecting may require a fresh connection event; individual missed disconnect events are not fully detectable.
+- Callbacks: Rejected numbers are saved locally immediately after the screening decision; contact names and notifications are handled afterwards in the background. Duplicate callbacks stay consolidated.
+- Texts and documentation: Updated German and English help text, permission hints, status wording and README. No new UI features.
 
 ### v0.1.0-dev.41 – Development build
 

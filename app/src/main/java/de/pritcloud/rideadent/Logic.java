@@ -12,6 +12,12 @@ public final class Logic {
         return false;
     }
 
+    // Only a definitely powered-on Bluetooth radio may activate a
+    // previously recorded device. An unknown radio state is fail-closed.
+    static Set<String> effectiveActive(Set<String> recorded, boolean radioOn) {
+        return radioOn ? recorded : Set.of();
+    }
+
     public static boolean shouldRejectCall(boolean runtimeEnabled,
                                            boolean enabled,
                                            boolean connected) {

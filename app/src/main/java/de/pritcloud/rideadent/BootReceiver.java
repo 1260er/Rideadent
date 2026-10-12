@@ -30,7 +30,7 @@ public final class BootReceiver extends BroadcastReceiver {
                             : "Neustart: Automatik wartet auf App-Start");
 
             BlitzerWatchService.sync(context);
-            CallbackNotifications.refresh(context);
+            CallbackNotifications.scheduleRefresh(context);
             return;
         }
 
@@ -50,7 +50,7 @@ public final class BootReceiver extends BroadcastReceiver {
                     "App aktualisiert: Fahrmodus-Dienst wird neu geprüft");
 
             BlitzerWatchService.sync(context);
-            CallbackNotifications.refresh(context);
+            CallbackNotifications.scheduleRefresh(context);
         }
     }
 

@@ -6,13 +6,18 @@ final class CallbackRules {
 
     // Compare only validated numbers; punctuation and international 00/+ formats
     // must not create separate callback entries. No country-code guessing.
+    // Used only to identify the same validated number in callback records.
+    // Do not guess country codes or modify the number used for actual dialing.
+    static String identity(String value) {
+        String number = dialNumber(value);
+        if (number == null) return null;
+        return number.startsWith("00") ? "+" + number.substring(2) : number;
+    }
+
     static boolean sameNumber(String first, String second) {
-        String a = dialNumber(first);
-        String b = dialNumber(second);
-        if (a == null || b == null) return false;
-        if (a.startsWith("00")) a = "+" + a.substring(2);
-        if (b.startsWith("00")) b = "+" + b.substring(2);
-        return a.equals(b);
+        String a = identity(first);
+        String b = identity(second);
+        return a != null && a.equals(b);
     }
 
     static String dialNumber(String value) {

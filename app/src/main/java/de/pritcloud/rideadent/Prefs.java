@@ -1,7 +1,11 @@
 package de.pritcloud.rideadent;
 
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,8 +25,37 @@ final class Prefs {
         return new HashSet<>(get(c).getStringSet("choose_" + type, Set.of()));
     }
 
-    static Set<String> active(Context c) {
+    // Raw cache is used ONLY to detect transitions while Bluetooth powers off.
+    static Set<String> recordedActive(Context c) {
         return new HashSet<>(get(c).getStringSet("connected", Set.of()));
+    }
+
+    // -1=unavailable, otherwise an Android BluetoothAdapter STATE_* value.
+    private static int bluetoothRadioState(Context c) {
+        try {
+            if (c.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                    != PackageManager.PERMISSION_GRANTED) return -1;
+            BluetoothManager manager = c.getSystemService(BluetoothManager.class);
+            BluetoothAdapter adapter = manager == null ? null : manager.getAdapter();
+            return adapter == null ? -1 : adapter.getState();
+        } catch (RuntimeException unavailable) {
+            return -1;
+        }
+    }
+
+    static Set<String> active(Context c) {
+        Set<String> recorded = recordedActive(c);
+        if (recorded.isEmpty()) return recorded;
+        int radio = bluetoothRadioState(c);
+        // A definite power-off invalidates saved ACL events. This is also a
+        // fallback when Android did not deliver the OFF broadcast to us.
+        if (radio == BluetoothAdapter.STATE_OFF
+                || radio == BluetoothAdapter.STATE_TURNING_OFF) {
+            get(c).edit().remove("connected").apply();
+        }
+        // Unknown radio state is fail-closed, but keeps the cache so a brief
+        // permission/service outage cannot permanently erase a real connection.
+        return Logic.effectiveActive(recorded, radio == BluetoothAdapter.STATE_ON);
     }
 
     static boolean connected(Context c, String type) {
@@ -85,7 +118,7 @@ final class Prefs {
     }
 
     static void state(Context c, String address, boolean on) {
-        Set<String> devices = active(c);
+        Set<String> devices = recordedActive(c);
         if (on) devices.add(address); else devices.remove(address);
         get(c).edit().putStringSet("connected", devices).apply();
     }

@@ -18,14 +18,14 @@
     <string name="automation_autostart">Nach Geräteneustart automatisch aktivieren</string>
     <string name="automation_autostart_hint">Autostart wirkt beim nächsten Geräteneustart. Öffnen von Rideadent aktiviert die Automatik für die aktuelle Sitzung.</string>
     <string name="automation_blitzer_hint">Bei verbundenem ausgewähltem Bluetooth-Gerät wird Blitzer.de alle 15 Sekunden überwacht.</string>
-    <string name="automation_calls_hint">Bei verbundenem ausgewähltem Bluetooth-Gerät werden eingehende Anrufe abgewiesen. Je Rufnummer kann innerhalb von 10 Minuten eine SMS gesendet werden.</string>
+    <string name="automation_calls_hint">Bei verbundenem ausgewähltem Bluetooth-Gerät werden Anrufe abgewiesen. Geeignete Rufnummern erhalten höchstens eine automatische SMS innerhalb von 10 Minuten.</string>
     <string name="automation_sms_hint">Lege die SMS fest, die nach einer Anrufabweisung gesendet werden soll.</string>
     <string name="automation_sms_placeholder">Hier deinen automatischen SMS-Text eingeben</string>
     <string name="automation_sms_default_note">Ohne eigenen Text wird automatisch gesendet: „Ich kann gerade nicht telefonieren. Ich melde mich später.“</string>
     <string name="sms_text_label">Text der automatischen SMS</string>
     <string name="action_save_sms_text">SMS-Text speichern</string>
     <string name="toast_sms_text_saved">SMS-Text gespeichert.</string>
-    <string name="toast_sms_text_required">Der SMS-Text darf nicht leer sein.</string>
+    <string name="toast_sms_text_required">Ein leeres Feld verwendet die Standardantwort.</string>
     <string name="action_start_blitzer">Blitzer.de-Start testen</string>
     <string name="action_stop_blitzer">Blitzer.de-Stopp testen</string>
     <string name="action_open_devices">Geräte konfigurieren</string>
@@ -40,7 +40,7 @@
     <string name="devices_permission_missing">Für die Anzeige gekoppelter Geräte wird die Bluetooth-Berechtigung benötigt.</string>
     <string name="permission_bluetooth_hint">Erkennt verbundene Bluetooth-Geräte für die Automationen.</string>
     <string name="permission_contacts_hint">Ermöglicht die Anrufprüfung auch bei gespeicherten Kontakten. Für Rückruf-Benachrichtigungen wird der Name zur abgewiesenen Nummer gezielt in den Kontakten gesucht.</string>
-    <string name="permission_sms_hint">Erlaubt den Versand der eingestellten automatischen Antwort.</string>
+    <string name="permission_sms_hint">Erlaubt automatische SMS-Antworten an Rufnummern mit zulässigem Format.</string>
     <string name="permission_notifications_hint">Zeigt den aktiven Fahrmodus und auf Wunsch Rückrufeinträge als Android-Benachrichtigungen an.</string>
     <string name="permission_call_screening_hint">Erlaubt Rideadent die Behandlung eingehender Anrufe.</string>
     <string name="permission_notification_listener_hint">Ermöglicht die Überwachung von Blitzer.de-Benachrichtigungen. Die Kategorie „Unterhaltungen“ kann deaktiviert werden.</string>
@@ -51,7 +51,7 @@
     <string name="permission_notification_post">Fahrmodus-Benachrichtigung erlauben</string>
     <string name="permission_app_settings">Rideadent-App- und Akku-Einstellungen öffnen</string>
     <string name="permission_bluetooth">Geräte in der Nähe</string>
-    <string name="permission_contacts">Kontakte und Konten</string>
+    <string name="permission_contacts">Kontakte</string>
     <string name="permission_sms">SMS-Versand</string>
     <string name="permission_notifications">Benachrichtigungen</string>
     <string name="permission_call_screening">Anruffilter</string>
@@ -84,7 +84,7 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_title">Rideadent</string>
     <string name="about_text">Rideadent ist dein Fahrassistent für Bluetooth-gesteuerte Automationen unterwegs.</string>
-    <string name="about_privacy">Geräteauswahl, Einstellungen und Diagnoseverlauf werden lokal auf dem Gerät gespeichert.</string>
+    <string name="about_privacy">Einstellungen, Diagnoseverlauf und optionale Daten abgewiesener Anrufe werden lokal auf dem Gerät gespeichert.</string>
     <string name="toast_call_role_active">Anruffilter ist bereits aktiv.</string>
     <string name="toast_call_role_unavailable">Anruffilter-Rolle ist nicht verfügbar.</string>
     <string name="toast_app_settings_unavailable">App-Einstellungen sind nicht verfügbar.</string>
@@ -106,7 +106,7 @@
     <string name="home_state_connected_with">Verbunden mit</string>
     <string name="home_state_disconnected">Nicht verbunden</string>
     <string name="home_state_granted">Erteilt</string>
-    <string name="home_state_missing">Fehlen</string>
+    <string name="home_state_missing">Nicht vollständig</string>
     <string name="home_state_optimized">Optimiert</string>
     <string name="home_state_restricted">Eingeschränkt</string>
     <string name="home_state_unrestricted">Uneingeschränkt</string>
@@ -132,7 +132,7 @@
     <string name="action_back">Zurück</string>
     <string name="page_battery">Akkuoptimierung</string>
     <string name="page_display">Darstellung</string>
-    <string name="settings_display_hint">Helles, dunkles oder systemabhängiges Design auswählen.</string>
+    <string name="settings_display_hint">Design auswählen und Rückruf-Benachrichtigungen ein- oder ausschalten.</string>
     <string name="battery_unrestricted_title">Akkunutzung der App</string>
     <string name="battery_unrestricted_explanation">Damit Rideadent im Hintergrund zuverlässiger überwachen kann, ist die Freigabe durch Android nötig.</string>
     <string name="battery_unrestricted_action">Nutzung uneingeschränkt zulassen</string>
@@ -150,7 +150,7 @@
     <string name="display_callback_switch">Rückrufe anzeigen</string>
     <string name="callback_channel">Abgewiesene Anrufe</string>
     <string name="callback_private_title">Abgewiesener Anruf</string>
-    <string name="callback_group_title">%1$d abgewiesene Anrufe</string>
+    <string name="callback_group_title">%1$d offene Rückrufe</string>
     <string name="callback_group_hint">Einträge zum Zurückrufen aufklappen</string>
     <string name="callback_tap_to_call">Antippen zum direkten Rückruf</string>
     <string name="callback_last_call">Letzter Anruf: %1$s</string>

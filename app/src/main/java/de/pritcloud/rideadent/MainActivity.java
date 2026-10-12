@@ -166,7 +166,7 @@ public class MainActivity extends Activity {
                 () -> BlitzerWatchService.sync(this),
                 50L);
         scheduleHomeStatus();
-        CallbackNotifications.refresh(this);
+        CallbackNotifications.scheduleRefresh(this);
     }
 
     @Override

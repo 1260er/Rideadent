@@ -18,7 +18,7 @@ Rideadent ist ein Bluetooth-basierter Fahrassistent. / Rideadent is a Bluetooth-
 
 - **Getrennte Bluetooth-Auswahl:** Geräte individuell für Blitzer.de und die Anrufautomatik festlegen.
 - **Blitzer.de:** Bei passender Bluetooth-Verbindung einen Startbefehl senden und die aktive Blitzer.de-Benachrichtigung regelmäßig prüfen.
-- **Anrufautomatik:** Eingehende Anrufe bei aktiver Automatik abweisen und, soweit möglich, eine automatische SMS senden; mit 10-Minuten-Wiederholsperre pro Rufnummer.
+- **Anrufautomatik:** Eingehende Anrufe bei aktiver Automatik abweisen und, soweit möglich, eine automatische SMS senden; mit 10-Minuten-Wiederholsperre pro Rufnummer. Automatische SMS werden nur an geprüfte, normal formatierte Rufnummern versendet; bekannte deutsche Sonderrufnummern sind ausgeschlossen. Die 10-Minuten-Sperre je Rufnummer bleibt erhalten; es gibt keine globale Stundenbegrenzung.
 - **Rückruf-Benachrichtigungen:** Pro abgewiesener Rufnummer ein Eintrag mit dem letzten Anrufzeitpunkt; direkte Rückrufe per Antippen. Der Eintrag wird nach dem Rückruf entfernt. Die gesamte Kachel unter „Darstellung“ schaltet die Funktion um (standardmäßig an).
 - **Längere SMS:** Mehrteilige Nachrichten werden über Androids SMS-Funktionen unterstützt.
 - **Startverhalten:** Nach einem Geräteneustart die Automatik wahlweise aktivieren; eine erneute Bluetooth-Verbindungsbenachrichtigung kann nötig sein.
@@ -28,6 +28,8 @@ Rideadent ist ein Bluetooth-basierter Fahrassistent. / Rideadent is a Bluetooth-
 Die beiden Fahrfunktionen können unabhängig voneinander aktiviert und Bluetooth-Geräten zugeordnet werden.
 
 **Rückruf-Benachrichtigungen (standardmäßig an):** Von Rideadent abgewiesene Anrufe werden als lokale Rückrufeinträge gespeichert und getrennt angezeigt; bekannte Kontakte mit Namen. Antippen startet mit Android-Telefonberechtigung direkt einen Anruf und entfernt den gewählten Eintrag. Unter **Einstellungen → Darstellung** lässt sich die Funktion deaktivieren; beim Abschalten werden offene Rückrufeinträge gelöscht. Auf dem Sperrbildschirm werden keine Nummern oder Namen gezeigt. Die Telefonberechtigung `CALL_PHONE` ist zusätzlich erforderlich.
+
+**Zuverlässigkeit:** Rückrufnummern werden nach der Anrufentscheidung zunächst lokal gespeichert; Kontaktnamen und Systembenachrichtigungen werden anschließend im Hintergrund ergänzt. Bereits gespeicherte Einträge erscheinen nach einem Neustart wieder. Wird Bluetooth ausgeschaltet, verliert der zuvor gespeicherte Verbindungsstatus seine Gültigkeit. Nach erneutem Einschalten ist gegebenenfalls ein neues Verbindungsereignis erforderlich. Einzelne verlorene Trennungsereignisse bei weiterhin eingeschaltetem Bluetooth können nicht in jedem Fall erkannt werden. Eine SMS wird nur bei einer zulässigen, konventionellen Nummer angestoßen; bei Sonderrufnummern entfällt lediglich die SMS, nicht die Anrufabweisung. Es gibt keine globale SMS-Stundenbegrenzung.
 
 
 ### Voraussetzungen und Berechtigungen
@@ -77,7 +79,7 @@ GitHub Actions führt dieselben Qualitätsprüfungen durch und überprüft die S
 
 - **Separate Bluetooth selections:** Assign devices independently to Blitzer.de monitoring and call automation.
 - **Blitzer.de:** Send a start command on a matching Bluetooth connection and periodically check for an active Blitzer.de notification.
-- **Call automation:** Reject incoming calls when enabled and, where possible, send an automatic SMS with a ten-minute cooldown per phone number.
+- **Call automation:** Reject incoming calls when enabled and, where possible, send an automatic SMS with a ten-minute cooldown per phone number. Automatic replies require a validated conventional phone number; known German special-service prefixes are excluded. The ten-minute per-number cooldown remains in effect; there is no global hourly limit.
 - **Callback notifications:** One entry per rejected caller number, showing the latest call time and supporting direct tap-to-call. The entry disappears after the callback is initiated. The whole card under Appearance toggles the feature (enabled by default).
 - **Long messages:** Supports multipart SMS through Android's SMS APIs.
 - **Startup behavior:** Optionally enable automation after reboot; a fresh Bluetooth connection event may be required.
@@ -87,6 +89,8 @@ GitHub Actions führt dieselben Qualitätsprüfungen durch und überprüft die S
 The two driving features can be enabled independently and assigned to different Bluetooth devices.
 
 **Callback notifications (enabled by default):** Rejected calls are saved locally and shown as separate notification entries, using contact names where available. Tapping an entry starts a direct phone call and removes that entry. The option can be disabled under **Settings → Appearance**, which also clears pending callbacks. Phone numbers and names are hidden on the lock screen. Direct calling requires Android’s `CALL_PHONE` permission.
+
+**Reliability:** A rejected number is stored locally immediately after the call-screening response; contact names and Android notifications are handled afterwards in the background. Stored callbacks are restored after a restart. When Bluetooth is turned off, cached connections are invalidated; reconnecting may require a fresh connection event. A missed individual disconnect event while Bluetooth stays on cannot always be detected. Automatic SMS replies are only initiated for eligible conventional numbers; blocking a special-service destination does not affect call rejection. There is no global hourly SMS limit.
 
 
 ### Requirements and permissions

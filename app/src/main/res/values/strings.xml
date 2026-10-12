@@ -18,14 +18,14 @@
     <string name="automation_autostart">Activate automatically after device restart</string>
     <string name="automation_autostart_hint">Autostart takes effect on the next device restart. Opening Rideadent activates automation for the current session.</string>
     <string name="automation_blitzer_hint">While a selected Bluetooth device is connected, Blitzer.de is monitored every 15 seconds.</string>
-    <string name="automation_calls_hint">While a selected Bluetooth device is connected, incoming calls are rejected. One SMS per caller can be sent within 10 minutes.</string>
+    <string name="automation_calls_hint">When a selected Bluetooth device is connected, incoming calls are rejected. Eligible numbers receive at most one automatic SMS in 10 minutes.</string>
     <string name="automation_sms_hint">Set the message sent after an automatically rejected call.</string>
     <string name="automation_sms_placeholder">Enter your automatic SMS message here</string>
     <string name="automation_sms_default_note">Without a custom message, Rideadent sends this default German reply: “Ich kann gerade nicht telefonieren. Ich melde mich später.”</string>
     <string name="sms_text_label">Automatic SMS text</string>
     <string name="action_save_sms_text">Save SMS text</string>
     <string name="toast_sms_text_saved">SMS text saved.</string>
-    <string name="toast_sms_text_required">SMS text must not be empty.</string>
+    <string name="toast_sms_text_required">An empty field uses the default SMS reply.</string>
     <string name="action_start_blitzer">Test Blitzer.de start</string>
     <string name="action_stop_blitzer">Test Blitzer.de stop</string>
     <string name="action_open_devices">Configure devices</string>
@@ -40,7 +40,7 @@
     <string name="devices_permission_missing">Bluetooth permission is required to show paired devices.</string>
     <string name="permission_bluetooth_hint">Detects connected Bluetooth devices for automations.</string>
     <string name="permission_contacts_hint">Allows screening calls from saved contacts. Callback notifications look up the contact name only for a rejected number.</string>
-    <string name="permission_sms_hint">Allows the configured automatic reply to be sent by SMS.</string>
+    <string name="permission_sms_hint">Allows automatic SMS replies to conventionally formatted phone numbers.</string>
     <string name="permission_notifications_hint">Shows driving mode and optional callback entries as Android notifications.</string>
     <string name="permission_call_screening_hint">Allows Rideadent to handle incoming calls.</string>
     <string name="permission_notification_listener_hint">Allows monitoring of Blitzer.de notifications. The “Conversations” category can be disabled.</string>
@@ -51,7 +51,7 @@
     <string name="permission_notification_post">Allow driving mode notification</string>
     <string name="permission_app_settings">Open Rideadent app and battery settings</string>
     <string name="permission_bluetooth">Nearby devices</string>
-    <string name="permission_contacts">Contacts and accounts</string>
+    <string name="permission_contacts">Contacts</string>
     <string name="permission_sms">SMS sending</string>
     <string name="permission_notifications">Notifications</string>
     <string name="permission_call_screening">Call screening</string>
@@ -84,7 +84,7 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_title">Rideadent</string>
     <string name="about_text">Rideadent is your driving assistant for Bluetooth-triggered automations on the road.</string>
-    <string name="about_privacy">Device selections, settings and diagnostic history are stored locally on the device.</string>
+    <string name="about_privacy">Settings, diagnostic history and optional rejected-call details are stored locally on the device.</string>
     <string name="toast_call_role_active">Call screening is already active.</string>
     <string name="toast_call_role_unavailable">Call screening role is not available.</string>
     <string name="toast_app_settings_unavailable">App settings are not available.</string>
@@ -106,7 +106,7 @@
     <string name="home_state_connected_with">Connected to</string>
     <string name="home_state_disconnected">Not connected</string>
     <string name="home_state_granted">Granted</string>
-    <string name="home_state_missing">Missing</string>
+    <string name="home_state_missing">Incomplete</string>
     <string name="home_state_optimized">Optimized</string>
     <string name="home_state_restricted">Restricted</string>
     <string name="home_state_unrestricted">Unrestricted</string>
@@ -132,7 +132,7 @@
     <string name="action_back">Go back</string>
     <string name="page_battery">Battery optimization</string>
     <string name="page_display">Appearance</string>
-    <string name="settings_display_hint">Choose light, dark or system appearance.</string>
+    <string name="settings_display_hint">Choose the appearance and toggle callback notifications.</string>
     <string name="battery_unrestricted_title">App battery usage</string>
     <string name="battery_unrestricted_explanation">Lets Rideadent keep its background monitoring running with fewer battery restrictions. Android must approve this setting.</string>
     <string name="battery_unrestricted_action">Allow unrestricted battery usage</string>
@@ -150,7 +150,7 @@
     <string name="display_callback_switch">Show callbacks</string>
     <string name="callback_channel">Rejected calls</string>
     <string name="callback_private_title">Rejected call</string>
-    <string name="callback_group_title">%1$d rejected calls</string>
+    <string name="callback_group_title">%1$d pending callbacks</string>
     <string name="callback_group_hint">Expand entries to call back</string>
     <string name="callback_tap_to_call">Tap to call back directly</string>
     <string name="callback_last_call">Last call: %1$s</string>
