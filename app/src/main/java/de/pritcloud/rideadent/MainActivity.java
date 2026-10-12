@@ -87,7 +87,8 @@ public class MainActivity extends Activity {
     };
     private final SharedPreferences.OnSharedPreferenceChangeListener homeChangeListener =
             (preferences, key) -> {
-                if ("connected".equals(key) || "heartbeat".equals(key)) {
+                if ("connected".equals(key) || "heartbeat".equals(key)
+                        || "blitzer_notification_event".equals(key)) {
                     statusHandler.removeCallbacks(homeEventTask);
                     statusHandler.post(homeEventTask);
                 }

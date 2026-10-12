@@ -8,6 +8,12 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.39 – Entwicklungsversion
+
+- Die Startseite reagiert unmittelbar auf das Erscheinen und Entfernen der Blitzer.de-Benachrichtigung; die Farbprüfung nutzt weiterhin den tatsächlichen Android-Benachrichtigungsstatus.
+- Ereignisse beim Verbinden oder Trennen des Benachrichtigungszugriffs aktualisieren die Anzeige ebenfalls.
+- Blitzer.de-Watchdog, Start-/Stopp-Befehle, Bluetooth-Automation und Anrufautomatik bleiben unverändert.
+
 ### v0.1.0-dev.38 – Entwicklungsversion
 
 - Fahrüberwachung: Blitzer.de wird abhängig von der erkannten Benachrichtigung grün, rot oder bei unbekanntem Status gelb angezeigt.
@@ -76,6 +82,12 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.39 – Development build
+
+- The home screen refreshes immediately when the Blitzer.de notification is posted or removed; its color still depends on the actual Android notification state.
+- Notification listener connection and disconnection events also refresh the display.
+- Blitzer.de watchdog, start/stop commands, Bluetooth automation and call handling remain unchanged.
 
 ### v0.1.0-dev.38 – Development build
 
