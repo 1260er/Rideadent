@@ -132,7 +132,7 @@
     <string name="action_back">Go back</string>
     <string name="page_battery">Battery optimization</string>
     <string name="page_display">Appearance</string>
-    <string name="settings_display_hint">Choose the appearance and toggle callback notifications.</string>
+    <string name="settings_display_hint">Choose theme and enable/disable callback notifications.</string>
     <string name="battery_unrestricted_title">App battery usage</string>
     <string name="battery_unrestricted_explanation">Lets Rideadent keep its background monitoring running with fewer battery restrictions. Android must approve this setting.</string>
     <string name="battery_unrestricted_action">Allow unrestricted battery usage</string>

@@ -1,3 +1,11 @@
+## v0.1.0-dev.43
+
+### Deutsch
+- Darstellung: Den Hinweistext der Kachel gekürzt, damit „ein/ausschalten“ vollständig in die Kachel passt.
+
+### English
+- Display: Shortened the card hint so the “enable/disable” wording fits completely inside the card.
+
 # Rideadent – Changelog
 
 **Deutsch:** [Änderungen auf Deutsch](#deutsch) · **English:** [Changes in English](#english)

@@ -132,7 +132,7 @@
     <string name="action_back">Zurück</string>
     <string name="page_battery">Akkuoptimierung</string>
     <string name="page_display">Darstellung</string>
-    <string name="settings_display_hint">Design auswählen und Rückruf-Benachrichtigungen ein- oder ausschalten.</string>
+    <string name="settings_display_hint">Design wählen und Rückruf-Benachrichtigungen ein/ausschalten.</string>
     <string name="battery_unrestricted_title">Akkunutzung der App</string>
     <string name="battery_unrestricted_explanation">Damit Rideadent im Hintergrund zuverlässiger überwachen kann, ist die Freigabe durch Android nötig.</string>
     <string name="battery_unrestricted_action">Nutzung uneingeschränkt zulassen</string>
