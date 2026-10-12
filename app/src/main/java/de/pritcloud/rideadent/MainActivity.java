@@ -634,8 +634,8 @@ public class MainActivity extends Activity {
                 automatic ? R.color.ui_success : R.color.ui_text_secondary);
         setHomeLink(homeRuntime, true, view -> navigate(Page.AUTOMATIONS));
 
-        // Name only the functions that are actually enabled, connected and
-        // running. The service heartbeat must be fresh before reporting Active.
+        // Evaluate both driving functions independently.
+        // The Blitzer notification is a separate running indicator.
         boolean runtime = Prefs.runtimeEnabled(this);
         boolean blitzerWanted = Logic.shouldWatchBlitzer(
                 runtime, Prefs.get(this).getBoolean("blitzer_enabled", false),
@@ -645,14 +645,30 @@ public class MainActivity extends Activity {
                 Prefs.connected(this, "sms"));
         boolean needed = driveServiceWanted();
         boolean responding = needed && ServiceState.isFresh(this);
-        int serviceLabel = !needed ? R.string.home_state_inactive
-                : !responding ? R.string.home_state_not_responding
-                : blitzerWanted && callsWanted ? R.string.home_state_active_both
-                : blitzerWanted ? R.string.home_state_active_blitzer
-                : R.string.home_state_active_calls;
-        setHomeStatusLineColor(homeService, R.string.status_service,
-                serviceLabel, !needed || !responding ? R.color.ui_danger : R.color.ui_success);
-        setHomeLink(homeService, needed && !responding,
+
+        Boolean blitzerPresent = blitzerWanted && responding
+                ? BlitzerListener.blitzerNotificationPresent() : null;
+
+        int blitzerColor = blitzerPresent == null ? R.color.ui_warning
+                : blitzerPresent ? R.color.ui_success : R.color.ui_danger;
+
+        if (!needed || !responding) {
+            setHomeStatusLineColor(homeService, R.string.status_service,
+                    !needed ? R.string.home_state_inactive
+                            : R.string.home_state_not_responding,
+                    R.color.ui_danger);
+        } else if (blitzerWanted && callsWanted) {
+            setHomeSplitDriveStatus(blitzerColor);
+        } else {
+            setHomeStatusLineColor(homeService, R.string.status_service,
+                    blitzerWanted ? R.string.home_state_active_blitzer
+                            : R.string.home_state_active_calls,
+                    blitzerWanted ? blitzerColor : R.color.ui_success);
+        }
+
+        setHomeLink(homeService,
+                needed && (!responding
+                        || (blitzerWanted && !Boolean.TRUE.equals(blitzerPresent))),
                 view -> navigate(Page.DIAGNOSTICS));
 
         updateHomeBluetooth(homeBlitzerBluetooth, R.string.status_blitzer_bt, "blitzer");
@@ -697,6 +713,36 @@ public class MainActivity extends Activity {
         setHomeStatusLineColor(homeBattery, R.string.status_battery,
                 batteryState, batteryColor);
         setHomeLink(homeBattery, true, view -> navigate(Page.BATTERY));
+    }
+
+    private void setHomeSplitDriveStatus(int blitzerColorResource) {
+        String state = getString(R.string.home_state_active_both);
+        String blitzer = getString(R.string.home_state_active_blitzer);
+        String calls = getString(R.string.home_state_active_calls);
+        String message = getString(R.string.status_service, state);
+        SpannableString colored = new SpannableString(message);
+
+        int stateStart = message.lastIndexOf(state);
+        int blitzerStart = state.indexOf(blitzer);
+        int callsStart = state.indexOf(calls);
+
+        if (stateStart >= 0 && blitzerStart >= 0) {
+            colored.setSpan(
+                    new ForegroundColorSpan(color(blitzerColorResource)),
+                    stateStart + blitzerStart,
+                    stateStart + blitzerStart + blitzer.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        if (stateStart >= 0 && callsStart >= 0) {
+            colored.setSpan(
+                    new ForegroundColorSpan(color(R.color.ui_success)),
+                    stateStart + callsStart,
+                    stateStart + callsStart + calls.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        homeService.setText(colored);
     }
 
     private void setHomeLink(View target, boolean enabled, View.OnClickListener onClick) {

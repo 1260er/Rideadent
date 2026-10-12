@@ -8,6 +8,13 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.38 – Entwicklungsversion
+
+- Fahrüberwachung: Blitzer.de wird abhängig von der erkannten Benachrichtigung grün, rot oder bei unbekanntem Status gelb angezeigt.
+- Bei gleichzeitig aktiver Anrufautomatik werden die Statusfarben beider Funktionen unabhängig dargestellt.
+- Bluetooth-Diagnose: Fehlende Gerätenamen werden durch einen verständlichen Ersatz mit Adresse ersetzt. Protokollierte Verbindungen zeigen, ob das Gerät für Blitzer.de, Anrufe, beide oder keine Funktion ausgewählt ist.
+- Blitzer.de-Watchdog, Bluetooth-Steuerung, Anrufabweisung und SMS-Verhalten bleiben unverändert.
+
 ### v0.1.0-dev.37 – Entwicklungsversion
 
 - Startseite: Die Anzeige der aktiven Fahrüberwachung nennt Blitzer.de, Anrufautomatik oder beide ohne das redundante Wort „Aktiv“.
@@ -69,6 +76,13 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.38 – Development build
+
+- Driving status: Blitzer.de is displayed in green when its notification is detected, red when missing and yellow when its status is unavailable.
+- When call automation is active as well, both functions receive independent status colors.
+- Bluetooth diagnostics: Missing device names now use a descriptive fallback with the device address. Connection events indicate which driving functions selected the device.
+- Blitzer.de watchdog, Bluetooth control, call screening and SMS behavior remain unchanged.
 
 ### v0.1.0-dev.37 – Development build
 

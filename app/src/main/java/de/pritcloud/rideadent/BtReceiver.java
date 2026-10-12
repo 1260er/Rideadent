@@ -35,7 +35,26 @@ public class BtReceiver extends BroadcastReceiver {
   boolean previous = Prefs.connected(c, "blitzer");
   Prefs.state(c, address, connected);
   boolean now = Prefs.connected(c, "blitzer");
-  Prefs.note(c, (connected ? "Verbunden: " : "Getrennt: ") + name);
+  // Android may omit a Bluetooth name even for a valid connection.
+  // Preserve the known address instead of recording the string "null".
+  String displayName = name == null ? "" :
+          name.replace((char) 10, (char) 32)
+                  .replace((char) 13, (char) 32).trim();
+  if (displayName.isEmpty()) {
+   displayName = "Bluetooth-Gerät " + address;
+  }
+
+  // Selection is independent of whether an automation is enabled.
+  boolean selectedBlitzer = Prefs.chosen(c, "blitzer").contains(address);
+  boolean selectedCalls = Prefs.chosen(c, "sms").contains(address);
+  String selection = selectedBlitzer && selectedCalls
+          ? " (ausgewählt: beide)"
+          : selectedBlitzer ? " (ausgewählt: Blitzer.de)"
+          : selectedCalls ? " (ausgewählt: Anrufautomatik)"
+          : " (nicht ausgewählt)";
+
+  Prefs.note(c, (connected ? "Verbunden: " : "Getrennt: ")
+          + displayName + selection);
   if (Prefs.runtimeEnabled(c)
           && Prefs.get(c).getBoolean("blitzer_enabled", false)
           && previous != now) {
