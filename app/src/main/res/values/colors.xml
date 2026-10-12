@@ -10,6 +10,8 @@
     <color name="ui_button_border">#40111111</color>
     <color name="ui_control_accent">#FFF47A22</color>
     <color name="ui_danger">#FFB3261E</color>
+    <color name="ui_success">#FF18723C</color>
+    <color name="ui_warning">#FF966000</color>
     <color name="ui_switch_track_off">#FF93989D</color>
     <color name="ui_switch_thumb_off">#FFE1E2E4</color>
     <color name="ui_nav_surface">#E6FFFFFF</color>

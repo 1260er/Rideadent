@@ -608,7 +608,7 @@ public class MainActivity extends Activity {
         boolean automatic = Prefs.get(this).getBoolean("auto_start", false);
         setHomeStatusLineColor(homeRuntime, R.string.status_runtime,
                 automatic ? R.string.state_automatic : R.string.state_manual,
-                automatic ? R.color.ui_control_accent : R.color.ui_text_secondary);
+                automatic ? R.color.ui_success : R.color.ui_text_secondary);
         setHomeLink(homeRuntime, true, view -> navigate(Page.AUTOMATIONS));
 
         // Distinguish inactive from the critical case: wanted but unresponsive.
@@ -618,8 +618,8 @@ public class MainActivity extends Activity {
                 !needed ? R.string.home_state_inactive
                         : responding ? R.string.home_state_active
                                      : R.string.home_state_not_responding,
-                !needed ? R.color.ui_text_secondary
-                        : responding ? R.color.ui_control_accent : R.color.ui_danger);
+                !needed ? R.color.ui_danger
+                         : responding ? R.color.ui_success : R.color.ui_danger);
         setHomeLink(homeService, needed && !responding,
                 view -> navigate(Page.DIAGNOSTICS));
 
@@ -629,15 +629,41 @@ public class MainActivity extends Activity {
         boolean granted = allHomePermissionsGranted();
         setHomeStatusLineColor(homePermissions, R.string.status_permissions,
                 granted ? R.string.home_state_granted : R.string.home_state_missing,
-                granted ? R.color.ui_control_accent : R.color.ui_danger);
+                granted ? R.color.ui_success : R.color.ui_danger);
         setHomeLink(homePermissions, true, view -> navigate(Page.PERMISSIONS));
 
-        // "Optimiert" is the user-facing name for unrestricted background work.
-        // Android itself calls the allowlisted state "battery optimization exempt".
-        boolean unrestricted = isHomeBatteryUnrestricted();
+        // Read the two independent battery settings directly from Android.
+        // Background restriction takes precedence over every other combination.
+        ActivityManager activity = getSystemService(ActivityManager.class);
+        PowerManager power = getSystemService(PowerManager.class);
+        int batteryState;
+        int batteryColor;
+        if (activity == null || power == null) {
+            // Never display a green success when Android cannot be queried.
+            batteryState = R.string.home_state_battery_unavailable;
+            batteryColor = R.color.ui_warning;
+        } else if (activity.isBackgroundRestricted()) {
+            batteryState = R.string.home_state_background_restricted;
+            batteryColor = R.color.ui_danger;
+        } else {
+            boolean unrestricted = power.isIgnoringBatteryOptimizations(getPackageName());
+            boolean noPause = isUnusedAppPauseDisabled();
+            if (unrestricted && noPause) {
+                batteryState = R.string.home_state_unrestricted;
+                batteryColor = R.color.ui_success;
+            } else if (!unrestricted && !noPause) {
+                batteryState = R.string.home_state_restricted;
+                batteryColor = R.color.ui_danger;
+            } else if (unrestricted) {
+                batteryState = R.string.home_state_pause_active;
+                batteryColor = R.color.ui_warning;
+            } else {
+                batteryState = R.string.home_state_battery_optimization_active;
+                batteryColor = R.color.ui_warning;
+            }
+        }
         setHomeStatusLineColor(homeBattery, R.string.status_battery,
-                unrestricted ? R.string.home_state_optimized : R.string.home_state_restricted,
-                unrestricted ? R.color.ui_control_accent : R.color.ui_danger);
+                batteryState, batteryColor);
         setHomeLink(homeBattery, true, view -> navigate(Page.BATTERY));
     }
 
@@ -701,7 +727,7 @@ public class MainActivity extends Activity {
             TextView disconnected = body(parent, "");
             disconnected.setTextSize(15);
             setHomeStatusLineColor(disconnected, templateResource,
-                    R.string.home_state_disconnected, R.color.ui_text_secondary);
+                    R.string.home_state_disconnected, R.color.ui_danger);
             return;
         }
 
@@ -763,7 +789,7 @@ public class MainActivity extends Activity {
             String name = names.get(i);
             TextView deviceName = body(deviceNames, name);
             deviceName.setTextSize(15);
-            deviceName.setTextColor(color(R.color.ui_control_accent));
+            deviceName.setTextColor(color(R.color.ui_success));
             deviceName.setSingleLine(true);
             deviceName.setEllipsize(TextUtils.TruncateAt.END);
             deviceName.setLayoutParams(new LinearLayout.LayoutParams(
@@ -913,12 +939,6 @@ public class MainActivity extends Activity {
     private void renderAutomations() {
         // SMS ist ein Editor, kein Toggle. Er bleibt innerhalb einer einzigen Kachel.
         LinearLayout smsCard = card();
-        LinearLayout.LayoutParams smsParams =
-                (LinearLayout.LayoutParams) smsCard.getLayoutParams();
-        smsParams.height = 0;
-        smsParams.weight = 1f;
-        smsCard.setLayoutParams(smsParams);
-        smsCard.setMinimumHeight(dp(250));
 
         LinearLayout header = new LinearLayout(this);
         header.setOrientation(LinearLayout.HORIZONTAL);
@@ -984,7 +1004,7 @@ public class MainActivity extends Activity {
         boolean autoStart = Prefs.get(this).getBoolean("auto_start", false);
         stateNavigationCard(R.drawable.ic_rideadent_automations,
                 R.string.automation_autostart,
-                R.string.automation_autostart_hint, autoStart, () -> {
+                R.string.automation_autostart_hint, autoStart, true, () -> {
                     Prefs.get(this).edit().putBoolean("auto_start", !autoStart).apply();
                     renderCurrentPage();
                 });

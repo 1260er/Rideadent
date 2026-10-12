@@ -8,6 +8,13 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.35 – Entwicklungsversion
+
+- Automationen: Die Kacheln für SMS-Text und Autostart richten ihre Höhe nach dem Inhalt; die Funktionen bleiben unverändert.
+- Startseite: Die Statusanzeige heißt nun „Akkunutzung“ und unterscheidet vier Kombinationen aus Akkunutzung und Pausieren bei Nichtnutzung. Zusätzliche Android-Hintergrundbeschränkungen werden gesondert gewarnt.
+- Statusfarben: Erfüllte Bedingungen grün, Warnungen gelb, Probleme rot; manuelles Startverhalten bleibt neutral grau. Bluetooth-Verbindungen, Fahrüberwachung und Berechtigungen wurden vereinheitlicht.
+- Deutsch und Englisch sowie helle und dunkle Darstellung aktualisiert. Die neuen Anzeigen müssen auf GrapheneOS noch praktisch überprüft werden.
+
 ### v0.1.0-dev.34 – Entwicklungsversion
 
 - Berechtigungs- und Akku-Kacheln passen ihre Höhe an den vollständigen Beschreibungstext an.
@@ -50,6 +57,13 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.35 – Development build
+
+- Automations: The SMS text and auto-start cards now size themselves to their content; their behavior is unchanged.
+- Home screen: Battery status is labeled “Battery use” and distinguishes four combinations of battery optimization and pause-if-unused settings. Additional Android background restrictions are flagged separately.
+- Status colors: Met conditions are green, warnings yellow, issues red, and manual startup remains neutral gray. Bluetooth, driving service and permission status colors have been made consistent.
+- Updated German and English texts and light/dark theme colors. The new indicators still require on-device verification with GrapheneOS.
 
 ### v0.1.0-dev.34 – Development build
 

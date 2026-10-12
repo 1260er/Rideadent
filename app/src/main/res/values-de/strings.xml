@@ -106,8 +106,13 @@
     <string name="home_state_missing">Fehlen</string>
     <string name="home_state_optimized">Optimiert</string>
     <string name="home_state_restricted">Eingeschränkt</string>
+    <string name="home_state_unrestricted">Uneingeschränkt</string>
+    <string name="home_state_pause_active">Pausieren aktiv</string>
+    <string name="home_state_battery_optimization_active">Akkuoptimierung aktiv</string>
+    <string name="home_state_background_restricted">Hintergrund eingeschränkt</string>
+    <string name="home_state_battery_unavailable">Status nicht ermittelbar</string>
     <string name="status_permissions">Berechtigungen: %1$s</string>
-    <string name="status_battery">Akkuoptimierung: %1$s</string>
+    <string name="status_battery">Akkunutzung: %1$s</string>
     <string name="settings_permissions_hint">Benötigte Zugriffsrechte prüfen und erteilen.</string>
     <string name="settings_battery_hint">Hintergrund- und Akkubeschränkungen in Android prüfen.</string>
     <string name="settings_devices_hint">Bluetooth-Geräte für beide Automationen auswählen.</string>

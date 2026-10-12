@@ -106,8 +106,13 @@
     <string name="home_state_missing">Missing</string>
     <string name="home_state_optimized">Optimized</string>
     <string name="home_state_restricted">Restricted</string>
+    <string name="home_state_unrestricted">Unrestricted</string>
+    <string name="home_state_pause_active">Pause when unused enabled</string>
+    <string name="home_state_battery_optimization_active">Battery optimization enabled</string>
+    <string name="home_state_background_restricted">Background restricted</string>
+    <string name="home_state_battery_unavailable">Status unavailable</string>
     <string name="status_permissions">Permissions: %1$s</string>
-    <string name="status_battery">Battery optimization: %1$s</string>
+    <string name="status_battery">Battery use: %1$s</string>
     <string name="settings_permissions_hint">Check and grant required access rights.</string>
     <string name="settings_battery_hint">Review background and battery restrictions in Android.</string>
     <string name="settings_devices_hint">Choose Bluetooth devices for both automations.</string>
