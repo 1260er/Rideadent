@@ -159,4 +159,9 @@
     <string name="callback_permission_needed">Für den direkten Rückruf ist die Telefonberechtigung erforderlich.</string>
     <string name="callback_grant_permission">Telefonberechtigung erteilen</string>
     <string name="callback_call_failed">Rückruf konnte nicht gestartet werden.</string>
+    <string name="blitzer_stop_retry">Blitzer.de-Stopp noch nicht bestätigt: STOP erneut gesendet (%1$d/2).</string>
+    <string name="blitzer_stop_confirmed">Blitzer.de-Stopp bestätigt: Benachrichtigung verschwunden.</string>
+    <string name="blitzer_stop_unknown">Blitzer.de-Stopp nicht prüfbar: Benachrichtigungszugriff nicht verfügbar.</string>
+    <string name="blitzer_stop_failed">Blitzer.de-Stopp NICHT bestätigt: Benachrichtigung weiterhin vorhanden oder STOP fehlgeschlagen.</string>
+    <string name="blitzer_stop_cancelled">Blitzer.de-Stoppprüfung abgebrochen: neue Fahrt begonnen.</string>
 </resources>

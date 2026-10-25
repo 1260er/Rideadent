@@ -16,6 +16,12 @@
 
 **Sprache wechseln:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#deutsch)
 
+### v0.1.0-dev.44 – Entwicklungsversion
+
+- Blitzer.de: Nach STOP wird zeitlich begrenzt geprüft, ob die Blitzer.de-Benachrichtigung verschwindet. Falls nötig maximal zwei weitere STOP-Befehle, mit dokumentiertem Ergebnis in Diagnose.
+- Neustart einer Fahrt: Ausstehende alte Stoppprüfungen werden abgebrochen. Auch bei geänderter Geräteauswahl und bei beendetem Überwachungsdienst wird START/STOP abgeglichen.
+- Deutsch und Englisch: Diagnosehinweise und README ergänzt. Anrufautomatik und Rückrufliste bleiben unverändert.
+
 ### v0.1.0-dev.42 – Entwicklungsversion
 
 - Anrufsicherheit: Die Antwort an Android erfolgt vor dem Diagnose-Logging. Die Anrufabweisung bleibt unabhängig vom SMS-Versand und von Rückruf-Benachrichtigungen.
@@ -113,6 +119,12 @@
 ## English
 
 **Switch language:** [Deutsch](#deutsch) · [English](#english) · [README](README.md#english)
+
+### v0.1.0-dev.44 – Development build
+
+- Blitzer.de: After STOP, briefly verify that the Blitzer.de notification disappears. Retry STOP at most twice if necessary; record the result in Diagnostics.
+- Drive restart: Cancel obsolete pending stop checks. Reconcile START/STOP when device selection changes or the drive service ends.
+- German and English: Added diagnostics and README documentation. Call and callback automations are unchanged.
 
 ### v0.1.0-dev.42 – Development build
 

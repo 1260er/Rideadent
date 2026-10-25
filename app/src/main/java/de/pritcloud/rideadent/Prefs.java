@@ -62,6 +62,15 @@ final class Prefs {
         return Logic.shouldRun(active(c), chosen(c, type));
     }
 
+    // A sent START is remembered across service restarts; STOP clears the marker.
+    static boolean blitzerStartSent(Context c) {
+        return get(c).getBoolean("blitzer_start_sent", false);
+    }
+
+    static void clearBlitzerStartSent(Context c) {
+        get(c).edit().remove("blitzer_start_sent").commit();
+    }
+
     static boolean runtimeEnabled(Context c) {
         return get(c).getBoolean("runtime_enabled", true);
     }

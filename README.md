@@ -32,6 +32,8 @@ Die beiden Fahrfunktionen können unabhängig voneinander aktiviert und Bluetoot
 **Zuverlässigkeit:** Rückrufnummern werden nach der Anrufentscheidung zunächst lokal gespeichert; Kontaktnamen und Systembenachrichtigungen werden anschließend im Hintergrund ergänzt. Bereits gespeicherte Einträge erscheinen nach einem Neustart wieder. Wird Bluetooth ausgeschaltet, verliert der zuvor gespeicherte Verbindungsstatus seine Gültigkeit. Nach erneutem Einschalten ist gegebenenfalls ein neues Verbindungsereignis erforderlich. Einzelne verlorene Trennungsereignisse bei weiterhin eingeschaltetem Bluetooth können nicht in jedem Fall erkannt werden. Eine SMS wird nur bei einer zulässigen, konventionellen Nummer angestoßen; bei Sonderrufnummern entfällt lediglich die SMS, nicht die Anrufabweisung. Es gibt keine globale SMS-Stundenbegrenzung.
 
 
+**Blitzer.de-Stoppkontrolle:** Wenn Rideadent Blitzer.de nicht mehr benötigt, sendet es STOP und kontrolliert anschließend anhand der Blitzer.de-Benachrichtigung, ob der Stopp erkennbar ist (erste Prüfung nach etwa 5 Sekunden, höchstens zwei erneute STOP-Versuche). Die Ereignisse werden in der Diagnose protokolliert. Eine neue Fahrt bricht die alte Stoppkontrolle ab. Ohne Benachrichtigungszugriff ist das Ergebnis unbekannt. Das Verschwinden der Benachrichtigung ist kein Beweis, dass alle Prozesse von Blitzer.de beendet wurden. Die kurze Kontrolle kann entfallen, wenn Android den Rideadent-Prozess beendet. Ein innerhalb des Kontrollfensters bewusst manuell gestartetes Blitzer.de kann erneut STOP erhalten.
+
 ### Voraussetzungen und Berechtigungen
 
 - **Android 16 oder neuer** (mindestens API 36); Bluetooth-Hardware und für die jeweilige Automatik passende Geräte.
@@ -92,6 +94,8 @@ The two driving features can be enabled independently and assigned to different 
 
 **Reliability:** A rejected number is stored locally immediately after the call-screening response; contact names and Android notifications are handled afterwards in the background. Stored callbacks are restored after a restart. When Bluetooth is turned off, cached connections are invalidated; reconnecting may require a fresh connection event. A missed individual disconnect event while Bluetooth stays on cannot always be detected. Automatic SMS replies are only initiated for eligible conventional numbers; blocking a special-service destination does not affect call rejection. There is no global hourly SMS limit.
 
+
+**Blitzer.de stop verification:** When Rideadent no longer needs Blitzer.de, it sends STOP and checks whether the Blitzer.de notification disappears (first check after about 5 seconds, at most two additional STOP attempts). Results are logged in Diagnostics. A new drive cancels the old check. Without notification-listener access the result is unknown. A disappeared notification does not prove that all Blitzer.de processes have stopped. The short check may be interrupted if Android kills Rideadent's process. Manually launching Blitzer.de during the verification window can trigger another STOP.
 
 ### Requirements and permissions
 

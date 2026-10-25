@@ -41,6 +41,13 @@ public final class BlitzerWatchService extends Service {
     private long nextRetryElapsed;
 
     static void sync(Context context) {
+        // Reconcile START/STOP even if another automation keeps this service
+        // alive, a selected device was changed, or a disconnect was missed.
+        boolean blitzerRequired = blitzerWanted(context);
+        if (BlitzerStopRules.reconcile(blitzerRequired,
+                Prefs.blitzerStartSent(context))) {
+            Blitzer.command(context, blitzerRequired);
+        }
         boolean shouldRun = driveWanted(context);
         Intent service =
                 new Intent(context, BlitzerWatchService.class);
@@ -73,6 +80,9 @@ public final class BlitzerWatchService extends Service {
                     context,
                     "Fahrmodusstart von Android blockiert: "
                             + exception.getClass().getSimpleName());
+            // Do not leave a Rideadent-started Blitzer session behind if
+            // Android refuses to start the driving foreground service.
+            if (Prefs.blitzerStartSent(context)) Blitzer.command(context, false);
         }
     }
 
@@ -111,6 +121,8 @@ public final class BlitzerWatchService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!driveWanted(this)) {
+            // This may be a START_STICKY restart without a BT callback.
+            sync(this);
             ServiceState.stopped(this);
             stopSelf();
             return START_NOT_STICKY;
@@ -119,6 +131,7 @@ public final class BlitzerWatchService extends Service {
         // Revalidate access on Android service restarts, not only in sync().
         if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
                 != PackageManager.PERMISSION_GRANTED) {
+            sync(this);
             ServiceState.stopped(this);
             Prefs.note(this, "Fahrmodus beendet: Bluetooth-Berechtigung fehlt");
             stopSelf();
@@ -157,6 +170,7 @@ public final class BlitzerWatchService extends Service {
                     this,
                     "Fahrmodus nicht möglich: "
                             + exception.getClass().getSimpleName());
+            if (Prefs.blitzerStartSent(this)) Blitzer.command(this, false);
 
             stopSelf();
             return START_NOT_STICKY;
@@ -183,12 +197,14 @@ public final class BlitzerWatchService extends Service {
         // A running service must not keep a fresh heartbeat after revocation.
         if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)
                 != PackageManager.PERMISSION_GRANTED) {
+            sync(this);
             ServiceState.stopped(this);
             Prefs.note(this, "Fahrmodus beendet: Bluetooth-Berechtigung fehlt");
             stopSelf();
             return;
         }
         if (!driveWanted(this)) {
+            sync(this);
             ServiceState.stopped(this);
 
             Prefs.note(
@@ -202,6 +218,8 @@ public final class BlitzerWatchService extends Service {
         ServiceState.heartbeat(this);
 
         if (!blitzerWanted(this)) {
+            // Blitzer may have become unwanted while the call service continues.
+            sync(this);
             previousStatus = 2;
             nextRetryElapsed = 0L;
 

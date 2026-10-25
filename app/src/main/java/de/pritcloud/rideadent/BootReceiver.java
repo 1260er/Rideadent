@@ -18,6 +18,8 @@ public final class BootReceiver extends BroadcastReceiver {
                     Prefs.get(context).getBoolean("auto_start", false);
 
             Prefs.clearActive(context);
+            // A previous-session START must not stop a user-launched app after reboot.
+            Prefs.clearBlitzerStartSent(context);
             ServiceState.stopped(context);
             Prefs.setRuntimeEnabled(
                     context,
